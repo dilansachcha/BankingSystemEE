@@ -1,0 +1,81 @@
+.page-container {
+  min-height: 100vh;
+  background-color: #0a0a0c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 500px;
+  background-color: #121214 !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: white !important;
+  border-radius: 12px !important;
+
+  ::ng-deep .mat-mdc-card-title { color: white; font-size: 24px; }
+  ::ng-deep .mat-mdc-card-subtitle { color: #a1a1aa; margin-bottom: 20px; }
+}
+
+.transfer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 10px;
+
+  button { font-weight: bold; }
+}
+
+.alert {
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.error { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+.success { background-color: rgba(34, 197, 94, 0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+.spinner-container { display: flex; justify-content: center; padding: 40px; }
+
+/*overrides*/
+::ng-deep input.mat-mdc-input-element,
+::ng-deep .mat-mdc-select-value-text {
+  color: white !important;
+}
+
+::ng-deep .mdc-notched-outline__leading,
+::ng-deep .mdc-notched-outline__notch,
+::ng-deep .mdc-notched-outline__trailing {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: #ef4444 !important;
+  border-width: 2px !important;
+}
+
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-form-field-label {
+  color: #ef4444 !important;
+}
+
+::ng-deep .mat-mdc-button:disabled,
+::ng-deep .mat-mdc-unelevated-button:disabled {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+::ng-deep .actions .mat-mdc-button:not(:disabled) {
+  color: white !important;
+}

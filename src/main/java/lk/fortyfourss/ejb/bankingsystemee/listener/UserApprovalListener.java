@@ -56,7 +56,7 @@ public class UserApprovalListener implements MessageListener {
 
         Session session = Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("dilansachintha44@gmail.com", "wfav lqsi pkud fqah");
+                return new PasswordAuthentication("dilansachintha44@gmail.com", "uztn zoen wxse kjja");
             }
         });
 

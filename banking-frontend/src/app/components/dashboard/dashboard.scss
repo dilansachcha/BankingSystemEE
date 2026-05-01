@@ -1,0 +1,128 @@
+.dashboard-container {
+  min-height: 100vh;
+  background-color: #0a0a0c;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+}
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background-color: #121214;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .brand-logo {
+      height: 60px;
+      width: auto;
+      filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));
+    }
+  }
+
+  .mat-icon { color: #ef4444; }
+}
+
+.content {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h1 { font-size: 28px; margin-bottom: 30px; border-left: 4px solid #ef4444; padding-left: 15px; }
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.account-card {
+  background-color: #121214 !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  transition: transform 0.2s ease;
+
+  &:hover { transform: translateY(-5px); border-color: rgba(239, 68, 68, 0.3) !important; }
+
+  .mat-card-title { font-size: 14px; color: #cca5a5 !important; letter-spacing: 1px; }
+
+  ::ng-deep mat-card-subtitle {
+    color: #a1a1aa !important;
+    font-family: monospace;
+    font-size: 16px;
+    margin-top: 5px;
+    display: block;
+  }
+}
+
+.balance-content {
+  margin-top: 20px;
+  padding-bottom: 10px;
+
+  .balance-label { font-size: 12px; color: #888; margin-bottom: 5px; text-align-last: end; }
+  .balance-amount { font-size: 32px; font-weight: bold; color: #ef4444; text-align-last: end;}
+}
+
+.transfer-btn {
+  width: 100%;
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  font-weight: bold !important;
+
+  &:hover { background-color: #ef4444 !important; color: white !important; }
+}
+
+.spinner-container { display: flex; justify-content: center; padding: 50px; }
+.error-msg { color: #ef4444; background: rgba(239,68,68,0.1); padding: 15px; border-radius: 8px; text-align: center;}
+
+.section-title {
+  margin-top: 50px;
+  border-left-color: #a1a1aa !important;
+}
+
+/* Base styles for the smart badges */
+.status-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.status-badge.blocked { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+.status-badge.closed { background-color: rgba(161, 161, 170, 0.2); color: #a1a1aa; border: 1px solid #a1a1aa; }
+.status-badge.active { background-color: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid #22c55e; }
+
+.inactive-card {
+  position: relative;
+  background-color: #0d0d0f !important; /* Slightly darker */
+  border-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+.closed-text { color: #555 !important; }
+
+.disabled-action-text {
+  width: 100%;
+  text-align: center;
+  color: #555;
+  font-size: 12px;
+  padding: 10px 0;
+  font-style: italic;
+}
+
+.withdraw-btn {
+  width: 100%;
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  color: #22c55e !important;
+  &:hover { background-color: #22c55e !important; color: white !important; }
+}

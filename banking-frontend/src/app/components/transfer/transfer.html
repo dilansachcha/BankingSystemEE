@@ -1,0 +1,48 @@
+<div class="page-container">
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Make a Transfer</mat-card-title>
+      <mat-card-subtitle>Send funds securely.</mat-card-subtitle>
+    </mat-card-header>
+
+    <div *ngIf="isLoading" class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <mat-card-content *ngIf="!isLoading">
+
+      <!-- Success/Error Banners -->
+      <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
+      <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
+
+      <form [formGroup]="transferForm" (ngSubmit)="onSubmit()" class="transfer-form">
+
+        <mat-form-field appearance="outline">
+          <mat-label>From Account</mat-label>
+          <mat-select formControlName="fromAccNo">
+            <mat-option *ngFor="let acc of myAccounts" [value]="acc.accountNumber">
+              {{ acc.accountNumber }} (LKR {{ acc.balance | number:'1.2-2' }})
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Recipient Account Number</mat-label>
+          <input matInput formControlName="toAccNo" placeholder="e.g. USR12-SAV-XXXXX">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Amount (LKR)</mat-label>
+          <input matInput type="number" formControlName="amount" placeholder="0.00" min="1">
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-button type="button" routerLink="/dashboard">Cancel</button>
+          <button mat-flat-button color="accent" type="submit" [disabled]="transferForm.invalid || isSubmitting">
+            {{ isSubmitting ? 'Processing...' : 'Transfer Funds' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,69 @@
+<div class="dashboard-container">
+  <header class="top-nav">
+    <div class="logo-container">
+      <img src="bankingsyslogo.png" alt="Fortress Banking Logo" class="brand-logo">
+    </div>
+    <button mat-icon-button (click)="logout()">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </header>
+
+  <main class="content">
+
+    <div *ngIf="isLoading" class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+    <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+
+    <ng-container *ngIf="!isLoading && !errorMessage">
+
+      <h1>Your Active Accounts</h1>
+      <div class="cards-grid">
+        <mat-card *ngFor="let acc of activeAccounts" class="account-card">
+          <mat-card-header>
+            <mat-card-title>{{ acc.accountType === 'FIXED' ? 'FIXED DEPOSIT' : acc.accountType + ' ACCOUNT' }}</mat-card-title>
+            <mat-card-subtitle>{{ acc.accountNumber }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content class="balance-content">
+            <div class="balance-label">Available Balance</div>
+            <div class="balance-amount">LKR {{ acc.balance | number:'1.2-2' }}</div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <button *ngIf="acc.accountType !== 'FIXED'" mat-flat-button color="accent" class="transfer-btn" routerLink="/transfer">Transfer Funds</button>
+
+            <button *ngIf="acc.accountType === 'FIXED' && acc.maturityStatus === 'MATURED'" mat-flat-button color="primary" class="withdraw-btn">Withdraw Matured Deposit</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <h1 class="section-title">Inactive & Restricted Accounts</h1>
+      <div class="cards-grid">
+        <mat-card *ngFor="let acc of otherAccounts" class="account-card inactive-card">
+
+          <div class="status-badge" [ngClass]="acc.status.toLowerCase()">
+            {{ acc.status }}
+          </div>
+
+          <mat-card-header>
+            <mat-card-title>{{ acc.accountType === 'FIXED' ? 'FIXED DEPOSIT' : acc.accountType + ' ACCOUNT' }}</mat-card-title>
+            <mat-card-subtitle>{{ acc.accountNumber }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content class="balance-content">
+            <div class="balance-label">Current Balance</div>
+            <div class="balance-amount" [class.closed-text]="acc.status === 'CLOSED'">
+              LKR {{ acc.balance | number:'1.2-2' }}
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <div class="disabled-action-text">Account actions restricted.</div>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+    </ng-container>
+  </main>
+</div>

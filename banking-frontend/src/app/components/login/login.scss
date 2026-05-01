@@ -1,0 +1,179 @@
+/* Background and Centering */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #0a0a0c;
+  background-image: radial-gradient(circle at top center, #16161e 0%, #0a0a0c 100%);
+  font-family: 'Roboto', sans-serif;
+}
+
+/* The Main Card */
+.glass-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 35px;
+  background-color: #121214 !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(239, 68, 68, 0.1) !important;
+  color: #ffffff;
+}
+
+/* Logo - Big and Tight */
+.logo-container {
+  text-align: center;
+  margin-top: -10px;
+  margin-bottom: 10px;
+
+  .brand-logo {
+    max-width: 280px;
+    height: auto;
+    opacity: 0.95;
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));
+  }
+}
+
+.welcome-text {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 13px;
+  color: #888888;
+  margin-bottom: 30px;
+}
+
+/* Red Links */
+.accent-link {
+  color: #ef4444;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #f87171;
+    text-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
+  }
+}
+
+.forgot-pwd {
+  text-align: center;
+  margin-bottom: 25px;
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+/* ==========================================================================
+   THE BULLETPROOF MATERIAL OVERRIDE (Forces Red & White, Kills Blue)
+   ========================================================================== */
+::ng-deep .dark-input {
+
+  /* 1. Force White Text and Red Caret (Fixes the Black Autofill Bug) */
+  input.mat-mdc-input-element,
+  .mdc-text-field__input {
+    color: #ffffff !important;
+    caret-color: #ef4444 !important;
+    -webkit-text-fill-color: #ffffff !important; /* Defeats Chrome's black autofill */
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 2. Idle Labels & Icons */
+  .mdc-floating-label {
+    color: #777777 !important;
+  }
+  .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-icon-button {
+    color: #777777 !important;
+    padding-right: 10px;
+  }
+
+  /* 3. Idle Borders */
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: #333333 !important;
+    border-width: 1px !important;
+    transition: border-color 0.2s ease;
+  }
+
+  /* 4. Hover Borders -> Force Red */
+  &:hover .mdc-notched-outline__leading,
+  &:hover .mdc-notched-outline__notch,
+  &:hover .mdc-notched-outline__trailing {
+    border-color: #ef4444 !important;
+  }
+
+  /* 5. Focused & Error Borders -> Force Neon Red & Thicker Border */
+  &.mat-focused .mdc-notched-outline__leading,
+  &.mat-focused .mdc-notched-outline__notch,
+  &.mat-focused .mdc-notched-outline__trailing,
+  &.mat-form-field-invalid .mdc-notched-outline__leading,
+  &.mat-form-field-invalid .mdc-notched-outline__notch,
+  &.mat-form-field-invalid .mdc-notched-outline__trailing {
+    border-color: #ef4444 !important;
+    border-width: 2px !important;
+  }
+
+  /* 6. Focused Labels & Icons -> Force Red */
+  &.mat-focused .mdc-floating-label,
+  &.mat-form-field-invalid .mdc-floating-label,
+  &.mat-focused .mat-mdc-form-field-icon-prefix,
+  &.mat-form-field-invalid .mat-mdc-form-field-icon-prefix {
+    color: #ef4444 !important;
+  }
+}
+
+/* ========================================================================== */
+
+/* Custom Error Box */
+.error-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  padding: 12px 15px;
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+
+/* The Glowing RED Button */
+.neon-btn {
+  padding: 26px 0 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  background-color: #ef4444 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2) !important;
+  transition: all 0.3s ease !important;
+
+  &:hover:not([disabled]) {
+    background-color: #dc2626 !important;
+    box-shadow: 0 6px 25px rgba(239, 68, 68, 0.5) !important;
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background-color: #1f1f23 !important;
+    color: #444444 !important;
+    box-shadow: none !important;
+  }
+}
