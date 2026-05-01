@@ -1,5 +1,4 @@
 # 🏦 BankingSystemEE – Complete Enterprise Java Banking System
-(UI Enhancements Pending)
 
 An **end-to-end secure banking system** built using **Jakarta EE 10**, **EJB**, **JPA (Hibernate)**, **JTA Transactions**, **Timer Services**, **WebSockets**, and **Admin-Customer Role Based Security**. Designed to handle **manual transfers**, **scheduled and recurring transactions**, **interest calculations**, **fixed deposit maturity handling**, **real-time admin notifications**, and **PDF reporting**, with a **strong focus on security, concurrency, and time-based business services**.
 
