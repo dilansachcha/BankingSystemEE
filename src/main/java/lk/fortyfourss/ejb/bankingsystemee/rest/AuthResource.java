@@ -38,6 +38,28 @@ public class AuthResource {
         public String password;
     }
 
+    // DTO OTP
+    public static class VerifyRequest {
+        public String email;
+        public String otp;
+    }
+
+    // DTO Reg
+    public static class RegisterRequest {
+        public String fullName;
+        public String email;
+        public String password;
+        public String nic;
+        public String mobile;
+    }
+
+    // DTO PW Reset
+    public static class ResetRequest {
+        public String email;
+        public String code;
+        public String newPassword;
+    }
+
     @POST
     @Path("/login")
     public Response login(LoginRequest request) {
@@ -51,6 +73,12 @@ public class AuthResource {
         }
 
         User user = userService.findByEmail(request.email);
+
+        if ("INACTIVE".equalsIgnoreCase(user.getStatus())) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"error\":\"Your account is pending Admin approval.\"}")
+                    .build();
+        }
 
         if ("ADMIN".equalsIgnoreCase(user.getRole())) {
             userService.assignAdminVerificationCode(request.email);
@@ -78,5 +106,77 @@ public class AuthResource {
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(SECRET_KEY)
                 .compact();
+    }
+
+    @POST
+    @Path("/verify-admin")
+    public Response verifyAdmin(VerifyRequest request) {
+        if (userService.validateAdminVerificationCode(request.email, request.otp)) {
+            userService.clearAdminVerificationCode(request.email);
+
+            User admin = userService.findByEmail(request.email);
+            String token = generateJwtToken(admin);
+
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("token", token);
+            responseData.put("role", admin.getRole());
+            responseData.put("fullName", admin.getFullName());
+
+            return Response.ok(responseData).build();
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("{\"error\":\"Invalid or expired OTP code.\"}")
+                    .build();
+        }
+    }
+
+    @POST
+    @Path("/register")
+    public Response register(RegisterRequest req) {
+        if (userService.emailExists(req.email)) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"Email already registered.\"}").build();
+        }
+        if (userService.nicExists(req.nic)) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"NIC already registered.\"}").build();
+        }
+
+        User user = new User();
+        user.setFullName(req.fullName);
+        user.setEmail(req.email);
+        user.setNic(req.nic);
+        user.setMobile(req.mobile);
+        user.setRole("CUSTOMER");
+        user.setStatus("INACTIVE");
+
+        user.setPassword(lk.fortyfourss.ejb.bankingsystemee.util.EncryptionUtil.hashPassword(req.password));
+        user.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+
+        userService.register(user);
+
+        return Response.ok("{\"message\":\"Registration successful! Please wait for Admin approval.\"}").build();
+    }
+
+    @POST
+    @Path("/forgot-password")
+    public Response forgotPassword(Map<String, String> payload) {
+        String email = payload.get("email");
+        boolean sent = userService.assignVerificationCode(email);
+
+        if (sent) {
+            return Response.ok("{\"message\":\"Verification code sent to your email!\"}").build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"Email not found or is an Admin account.\"}").build();
+        }
+    }
+
+    @POST
+    @Path("/reset-password")
+    public Response resetPassword(ResetRequest req) {
+        if (userService.validateVerificationCode(req.email, req.code)) {
+            userService.resetPassword(req.email, req.newPassword);
+            return Response.ok("{\"message\":\"Password reset successfully! You can now log in.\"}").build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"Invalid or expired verification code.\"}").build();
+        }
     }
 }

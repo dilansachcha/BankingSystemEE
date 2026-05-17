@@ -9,8 +9,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 40px;
-  background-color: #121214;
+  padding: 15px 30px;
+  background-color: #0a0a0c;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
   .logo-container {
@@ -25,7 +25,33 @@
     }
   }
 
-  .mat-icon { color: #ef4444; }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .history-btn {
+      color: #a1a1aa;
+      font-weight: 500;
+      transition: color 0.2s ease;
+
+      mat-icon {
+        margin-right: 5px;
+      }
+
+      &:hover {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    .logout-btn {
+      color: #ef4444;
+      &:hover {
+        background-color: rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
 }
 
 .content {
@@ -125,4 +151,13 @@
   background-color: rgba(34, 197, 94, 0.1) !important;
   color: #22c55e !important;
   &:hover { background-color: #22c55e !important; color: white !important; }
+}
+
+::ng-deep .new-account-btn {
+  background-color: #ef4444 !important;
+  color: white !important;
+}
+
+::ng-deep .new-account-btn:hover {
+  background-color: #dc2626 !important;
 }

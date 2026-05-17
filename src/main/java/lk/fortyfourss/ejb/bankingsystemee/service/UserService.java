@@ -60,7 +60,16 @@ public class UserService {
     public boolean validate(String email, String password){
         User user = findByEmail(email);
         if (user == null) return false;
-        return user.getPassword().equals(EncryptionUtil.encrypt(password));
+
+        boolean isCorrect = EncryptionUtil.verifyPassword(password, user.getPassword());
+
+        if (isCorrect && user.getPassword().length() == 64) {
+            user.setPassword(EncryptionUtil.hashPassword(password));
+            em.merge(user);
+            System.out.println("🔒 [Security] Upgraded user " + email + " to BCrypt!");
+        }
+
+        return isCorrect;
     }
 
     public User findById(int userId) {
@@ -110,7 +119,7 @@ public class UserService {
     public void resetPassword(String email, String newPassword) {
         User user = findByEmail(email);
         if (user != null) {
-            user.setPassword(EncryptionUtil.encrypt(newPassword));
+            user.setPassword(EncryptionUtil.hashPassword(newPassword)); // <-- Updated!
             user.setVerificationCode(null);
             em.merge(user);
         }

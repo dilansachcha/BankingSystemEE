@@ -23,4 +23,18 @@ export class AccountService {
   getMyAccounts(): Observable<Account[]> {
     return this.http.get<Account[]>(`${this.apiUrl}/my-accounts`);
   }
+
+  withdrawMatured(fixedId: number, targetId: number): Observable<any> {
+    const payload = { fixedId, targetId };
+    return this.http.post('http://localhost:8080/BankingSystemEE-1.0-SNAPSHOT/api/fixed-deposits/withdraw-matured', payload);
+  }
+
+  closeFixedDeposit(fixedId: number, targetId: number): Observable<any> {
+    const payload = { fixedId, targetId };
+    return this.http.post('http://localhost:8080/BankingSystemEE-1.0-SNAPSHOT/api/fixed-deposits/close', payload);
+  }
+
+  createAccount(payload: { accountType: string, initialDeposit: number, maturityMonths?: number }): Observable<any> {
+    return this.http.post('http://localhost:8080/BankingSystemEE-1.0-SNAPSHOT/api/account-create', payload);
+  }
 }

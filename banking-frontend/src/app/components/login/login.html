@@ -6,15 +6,19 @@
     </div>
 
     <h2 class="welcome-text">Welcome Back!</h2>
-    <p class="subtitle">Don't have an account yet? <a href="#" class="accent-link">Sign up</a></p>
+    <p class="subtitle">Don't have an account yet? <a routerLink="/register" class="accent-link">Sign up</a></p>
 
     <mat-card-content>
-      <form (ngSubmit)="onSubmit()">
+      <!-- ERROR / SUCCESS MESSAGES -->
+      <div class="error-msg" *ngIf="errorMessage">
+        <mat-icon>error_outline</mat-icon> {{ errorMessage }}
+      </div>
+      <div class="success-msg" *ngIf="successMessage" style="color: #10b981; margin-bottom: 15px; text-align: center;">
+        <mat-icon style="vertical-align: middle;">check_circle</mat-icon> {{ successMessage }}
+      </div>
 
-        <div class="error-msg" *ngIf="errorMessage">
-          <mat-icon>error_outline</mat-icon> {{ errorMessage }}
-        </div>
-
+      <!-- 1. STANDARD LOGIN FORM -->
+      <form (ngSubmit)="onSubmit()" *ngIf="!isOtpMode && !isForgotMode && !isResetMode">
         <mat-form-field appearance="outline" class="dark-input full-width">
           <mat-label>Email address</mat-label>
           <mat-icon matPrefix>mail_outline</mat-icon>
@@ -31,14 +35,71 @@
         </mat-form-field>
 
         <div class="forgot-pwd">
-          <a href="#" class="accent-link">Forgot Password?</a>
+          <a href="javascript:void(0)" class="accent-link" (click)="isForgotMode = true; errorMessage = ''; successMessage = '';">Forgot Password?</a>
         </div>
 
-        <button mat-flat-button type="submit" class="neon-btn full-width" [disabled]="!email || !password">
-          Login
+        <button mat-flat-button type="submit" class="neon-btn full-width" [disabled]="!email || !password || isLoading">
+          {{ isLoading ? 'Authenticating...' : 'Login' }}
         </button>
-
       </form>
+
+      <form (ngSubmit)="onVerifyOtp()" *ngIf="isOtpMode">
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>6-Digit Verification Code</mat-label>
+          <mat-icon matPrefix>security</mat-icon>
+          <input matInput type="text" name="otp" [(ngModel)]="otp" required maxlength="6" autocomplete="off">
+        </mat-form-field>
+        <button mat-flat-button type="submit" class="neon-btn full-width" [disabled]="!otp || otp.length !== 6 || isLoading">
+          {{ isLoading ? 'Verifying...' : 'Verify & Login' }}
+        </button>
+        <button mat-button type="button" class="full-width cancel-btn" (click)="cancelFlows()">Cancel</button>
+      </form>
+
+      <form (ngSubmit)="onRequestReset()" *ngIf="isForgotMode">
+        <p style="text-align: center; margin-bottom: 20px;">Enter your email to receive a password reset code.</p>
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>Email address</mat-label>
+          <mat-icon matPrefix>mail_outline</mat-icon>
+          <input matInput type="email" name="email" [(ngModel)]="email" required>
+        </mat-form-field>
+        <button mat-flat-button type="submit" class="neon-btn full-width" [disabled]="!email || isLoading">
+          {{ isLoading ? 'Sending...' : 'Send Reset Code' }}
+        </button>
+        <button mat-button type="button" class="full-width cancel-btn" (click)="cancelFlows()">Back to Login</button>
+      </form>
+
+      <form (ngSubmit)="onResetPassword()" *ngIf="isResetMode">
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>Verification Code</mat-label>
+          <mat-icon matPrefix>vpn_key</mat-icon>
+          <input matInput type="text" name="resetCode" [(ngModel)]="resetCode" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>New Password</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input matInput [type]="hideNewPassword ? 'password' : 'text'" name="newPassword" [(ngModel)]="newPassword" required>
+          <button mat-icon-button matSuffix (click)="hideNewPassword = !hideNewPassword" type="button">
+            <mat-icon>{{hideNewPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>Confirm Password</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input matInput [type]="hideConfirm ? 'password' : 'text'" name="confirmPassword" [(ngModel)]="confirmPassword" required>
+          <button mat-icon-button matSuffix (click)="hideConfirm = !hideConfirm" type="button">
+            <mat-icon>{{hideConfirm ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <button mat-flat-button type="submit" class="neon-btn full-width" [disabled]="!resetCode || !newPassword || !confirmPassword || isLoading">
+          {{ isLoading ? 'Resetting...' : 'Reset Password' }}
+        </button>
+        <button mat-button type="button" class="full-width cancel-btn" (click)="cancelFlows()">Cancel</button>
+      </form>
+
     </mat-card-content>
+
   </mat-card>
 </div>

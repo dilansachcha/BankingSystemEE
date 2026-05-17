@@ -26,8 +26,9 @@ public class AppIdentityStore implements IdentityStore {
 
             User user = userService.findByEmail(email);
             if (user != null && user.getStatus().equalsIgnoreCase("ACTIVE")) {
-                String hashedPassword = EncryptionUtil.encrypt(rawPassword);
-                if (hashedPassword.equals(user.getPassword())) {
+
+                // ---> NEW BCRYPT VERIFICATION STRATEGY <---
+                if (EncryptionUtil.verifyPassword(rawPassword, user.getPassword())) {
                     return new CredentialValidationResult(user.getEmail(), Set.of(user.getRole()));
                 }
             }

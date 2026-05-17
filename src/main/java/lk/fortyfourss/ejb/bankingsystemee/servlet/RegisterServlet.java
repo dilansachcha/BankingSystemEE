@@ -45,7 +45,7 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        String encryptedPassword = EncryptionUtil.encrypt(password);
+        String encryptedPassword = EncryptionUtil.hashPassword(password);
 
         User user = new User();
         user.setFullName(name);

@@ -51,6 +51,11 @@ public class JwtAuthFilter implements ContainerRequestFilter {
                 throw new Exception("No userId found in token");
             }
 
+            Object roleObj = claims.get("role");
+            if (roleObj != null) {
+                requestContext.setProperty("role", roleObj.toString());
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());

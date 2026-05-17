@@ -14,4 +14,20 @@ export class AuthService {
   login(email: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, { email, password });
   }
+
+  verifyAdmin(email: string, otp: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/verify-admin`, { email, otp });
+  }
+
+  register(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, payload);
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reset-password`, payload);
+  }
 }

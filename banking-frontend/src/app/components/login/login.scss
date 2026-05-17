@@ -1,4 +1,3 @@
-/* Background and Centering */
 .login-wrapper {
   display: flex;
   justify-content: center;
@@ -9,7 +8,6 @@
   font-family: 'Roboto', sans-serif;
 }
 
-/* The Main Card */
 .glass-card {
   width: 100%;
   max-width: 420px;
@@ -21,7 +19,6 @@
   color: #ffffff;
 }
 
-/* Logo - Big and Tight */
 .logo-container {
   text-align: center;
   margin-top: -10px;
@@ -76,22 +73,18 @@
   margin-bottom: 5px;
 }
 
-/* ==========================================================================
-   THE BULLETPROOF MATERIAL OVERRIDE (Forces Red & White, Kills Blue)
-   ========================================================================== */
+//Override
 ::ng-deep .dark-input {
 
-  /* 1. Force White Text and Red Caret (Fixes the Black Autofill Bug) */
   input.mat-mdc-input-element,
   .mdc-text-field__input {
     color: #ffffff !important;
     caret-color: #ef4444 !important;
-    -webkit-text-fill-color: #ffffff !important; /* Defeats Chrome's black autofill */
+    -webkit-text-fill-color: #ffffff !important;
     outline: none !important;
     box-shadow: none !important;
   }
 
-  /* 2. Idle Labels & Icons */
   .mdc-floating-label {
     color: #777777 !important;
   }
@@ -101,7 +94,6 @@
     padding-right: 10px;
   }
 
-  /* 3. Idle Borders */
   .mdc-notched-outline__leading,
   .mdc-notched-outline__notch,
   .mdc-notched-outline__trailing {
@@ -110,14 +102,12 @@
     transition: border-color 0.2s ease;
   }
 
-  /* 4. Hover Borders -> Force Red */
   &:hover .mdc-notched-outline__leading,
   &:hover .mdc-notched-outline__notch,
   &:hover .mdc-notched-outline__trailing {
     border-color: #ef4444 !important;
   }
 
-  /* 5. Focused & Error Borders -> Force Neon Red & Thicker Border */
   &.mat-focused .mdc-notched-outline__leading,
   &.mat-focused .mdc-notched-outline__notch,
   &.mat-focused .mdc-notched-outline__trailing,
@@ -128,7 +118,6 @@
     border-width: 2px !important;
   }
 
-  /* 6. Focused Labels & Icons -> Force Red */
   &.mat-focused .mdc-floating-label,
   &.mat-form-field-invalid .mdc-floating-label,
   &.mat-focused .mat-mdc-form-field-icon-prefix,
@@ -137,9 +126,6 @@
   }
 }
 
-/* ========================================================================== */
-
-/* Custom Error Box */
 .error-msg {
   display: flex;
   align-items: center;
@@ -153,7 +139,6 @@
   font-size: 13px;
 }
 
-/* The Glowing RED Button */
 .neon-btn {
   padding: 26px 0 !important;
   font-size: 15px !important;

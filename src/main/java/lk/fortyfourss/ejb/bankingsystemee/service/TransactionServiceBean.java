@@ -1,5 +1,6 @@
 package lk.fortyfourss.ejb.bankingsystemee.service;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
@@ -26,6 +27,7 @@ import java.util.logging.Logger;
 @Logging
 @Performance
 @TransactionManagement(TransactionManagementType.BEAN)
+@PermitAll
 public class TransactionServiceBean {
 
     @EJB
@@ -72,6 +74,11 @@ public class TransactionServiceBean {
 
             transaction.commit();
             LOGGER.info("[TransactionService] Transfer Successful");
+
+            //WebSocket Broadcast
+            String wsMessage = String.format("{\"type\":\"TRANSFER\", \"from\":\"%s\", \"to\":\"%s\", \"amount\":%.2f}",
+                    fromAccNo, toAccNo, amount);
+            lk.fortyfourss.ejb.bankingsystemee.websocket.AdminNotificationWebSocket.broadcast(wsMessage);
 
             if (amount >= 50000.0) {
                 notificationPublisher.sendHighAmountTransaction(fromAcc.getUser().getEmail(), amount);
@@ -120,6 +127,12 @@ public class TransactionServiceBean {
 
             transaction.commit();
             LOGGER.info("[TransactionService] Fixed Deposit Closure Successful");
+
+            //WebSocket Broadcast
+            String wsMessage = String.format("{\"type\":\"TRANSFER\", \"from\":\"%s\", \"to\":\"%s\", \"amount\":%.2f}",
+                    fromAccNo, toAccNo, amount);
+            lk.fortyfourss.ejb.bankingsystemee.websocket.AdminNotificationWebSocket.broadcast(wsMessage);
+
         } catch (Exception e) {
             LOGGER.warning("[TransactionService] Closure Failed Rolling Back: " + e.getMessage());
             try { transaction.rollback(); } catch (Exception ex) {}
@@ -166,6 +179,12 @@ public class TransactionServiceBean {
 
             transaction.commit();
             LOGGER.info("[TransactionService] Matured FD Withdrawal Successful from " + fixed.getAccountNumber() + " to " + target.getAccountNumber());
+
+            // WebSocket Broadcast
+            String wsMessage = String.format("{\"type\":\"TRANSFER\", \"from\":\"%s\", \"to\":\"%s\", \"amount\":%.2f}",
+                    fixed.getAccountNumber(), target.getAccountNumber(), amount);
+            lk.fortyfourss.ejb.bankingsystemee.websocket.AdminNotificationWebSocket.broadcast(wsMessage);
+
         } catch (Exception e) {
             try { transaction.rollback(); } catch (Exception ex) {}
             throw new RuntimeException("Withdrawal Failed: " + e.getMessage());

@@ -32,15 +32,18 @@ public class AdminNotificationWebSocket {
     @OnError
     public void onError(Session session, Throwable throwable) {
         sessions.remove(session);
-        System.err.println("[WebSocket] Error: " + throwable.getMessage());
+        System.err.println("⚠[WebSocket] Error: " + throwable.getMessage());
     }
 
-    public void broadcast(String message) {
+    //static
+    public static void broadcast(String message) {
         sessions.forEach(session -> {
-            try {
-                session.getBasicRemote().sendText(message);
-            } catch (IOException e) {
-                System.err.println("[WebSocket] Send Error: " + e.getMessage());
+            if (session.isOpen()) {
+                try {
+                    session.getBasicRemote().sendText(message);
+                } catch (IOException e) {
+                    System.err.println("[WebSocket] Send Error: " + e.getMessage());
+                }
             }
         });
     }

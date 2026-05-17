@@ -1,5 +1,6 @@
 package lk.fortyfourss.ejb.bankingsystemee.service;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -21,6 +22,7 @@ import java.util.logging.Logger;
 @Stateless
 @Logging
 @Performance
+@PermitAll
 public class AccountService {
 
     @PersistenceContext(unitName = "bankingPU")

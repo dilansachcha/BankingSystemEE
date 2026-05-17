@@ -21,4 +21,13 @@ public class UserTransactionHistoryServiceBean {
                 .setParameter("user", user)
                 .getResultList();
     }
+
+    public List<Transaction> getTransactionsByUserId(int userId) {
+        return em.createQuery("""
+            SELECT t FROM Transaction t 
+            WHERE t.account.user.id = :userId 
+            ORDER BY t.transactionTime DESC""", Transaction.class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
 }

@@ -66,8 +66,13 @@
   border-width: 2px !important;
 }
 
-::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-form-field-label {
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-form-field-label,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-floating-label {
   color: #ef4444 !important;
+}
+
+::ng-deep .mat-mdc-form-field.mat-focused input.mat-mdc-input-element {
+  caret-color: #ef4444 !important;
 }
 
 ::ng-deep .mat-mdc-button:disabled,
@@ -78,4 +83,24 @@
 
 ::ng-deep .actions .mat-mdc-button:not(:disabled) {
   color: white !important;
+}
+
+::ng-deep .actions .mat-mdc-unelevated-button:not(:disabled),
+::ng-deep .actions .mat-mdc-raised-button:not(:disabled) {
+  background-color: #ef4444 !important;
+  color: white !important;
+}
+
+::ng-deep .actions .mat-mdc-unelevated-button:not(:disabled):hover,
+::ng-deep .actions .mat-mdc-raised-button:not(:disabled):hover {
+  background-color: #dc2626 !important;
+}
+
+::ng-deep .actions .mat-mdc-button:not(:disabled) {
+  color: #a1a1aa !important;
+}
+
+::ng-deep .actions .mat-mdc-button:not(:disabled):hover {
+  color: white !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
 }

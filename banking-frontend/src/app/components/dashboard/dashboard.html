@@ -3,9 +3,28 @@
     <div class="logo-container">
       <img src="bankingsyslogo.png" alt="Fortress Banking Logo" class="brand-logo">
     </div>
-    <button mat-icon-button (click)="logout()">
-      <mat-icon>logout</mat-icon>
-    </button>
+
+    <div class="header-actions">
+
+      <button mat-flat-button color="accent" routerLink="/open-account" class="new-account-btn">
+        <mat-icon>add_circle</mat-icon>
+        Open Account
+      </button>
+
+      <button mat-button class="history-btn" routerLink="/scheduled-list">
+        <mat-icon>schedule</mat-icon>
+        Scheduled
+      </button>
+
+      <button mat-button class="history-btn" routerLink="/history">
+        <mat-icon>receipt_long</mat-icon>
+        Transaction History
+      </button>
+
+      <button mat-icon-button (click)="logout()" class="logout-btn" title="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
   </header>
 
   <main class="content">
@@ -33,7 +52,17 @@
           <mat-card-actions>
             <button *ngIf="acc.accountType !== 'FIXED'" mat-flat-button color="accent" class="transfer-btn" routerLink="/transfer">Transfer Funds</button>
 
-            <button *ngIf="acc.accountType === 'FIXED' && acc.maturityStatus === 'MATURED'" mat-flat-button color="primary" class="withdraw-btn">Withdraw Matured Deposit</button>
+            <button *ngIf="acc.accountType === 'FIXED' && acc.maturityStatus === 'MATURED'"
+                    mat-flat-button color="primary" class="withdraw-btn"
+                    (click)="openFixedActionDialog(acc, 'withdraw')">
+              Withdraw Matured Deposit
+            </button>
+
+            <button *ngIf="acc.accountType === 'FIXED' && acc.maturityStatus !== 'MATURED'"
+                    mat-flat-button color="warn" class="action-btn"
+                    (click)="openFixedActionDialog(acc, 'close')">
+              Close Deposit
+            </button>
           </mat-card-actions>
         </mat-card>
       </div>
