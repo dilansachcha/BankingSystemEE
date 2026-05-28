@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Account {
   id: number;
@@ -16,25 +17,23 @@ export interface Account {
 })
 export class AccountService {
   private http = inject(HttpClient);
-
-  // Java REST endpoint
-  private apiUrl = 'http://localhost:8080/BankingSystemEE-1.0-SNAPSHOT/api/accounts';
+  private apiUrl = environment.apiUrl;
 
   getMyAccounts(): Observable<Account[]> {
-    return this.http.get<Account[]>(`${this.apiUrl}/my-accounts`);
+    return this.http.get<Account[]>(`${this.apiUrl}/accounts/my-accounts`);
   }
 
   withdrawMatured(fixedId: number, targetId: number): Observable<any> {
     const payload = { fixedId, targetId };
-    return this.http.post('http://localhost:8080/BankingSystemEE-1.0-SNAPSHOT/api/fixed-deposits/withdraw-matured', payload);
+    return this.http.post(`${this.apiUrl}/fixed-deposits/withdraw-matured`, payload);
   }
 
   closeFixedDeposit(fixedId: number, targetId: number): Observable<any> {
     const payload = { fixedId, targetId };
-    return this.http.post('http://localhost:8080/BankingSystemEE-1.0-SNAPSHOT/api/fixed-deposits/close', payload);
+    return this.http.post(`${this.apiUrl}/fixed-deposits/close`, payload);
   }
 
   createAccount(payload: { accountType: string, initialDeposit: number, maturityMonths?: number }): Observable<any> {
-    return this.http.post('http://localhost:8080/BankingSystemEE-1.0-SNAPSHOT/api/account-create', payload);
+    return this.http.post(`${this.apiUrl}/account-create`, payload);
   }
 }

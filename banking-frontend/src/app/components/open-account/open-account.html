@@ -1,0 +1,46 @@
+<div class="form-container">
+  <div class="header">
+    <button mat-icon-button routerLink="/dashboard" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Open New Account</h1>
+  </div>
+
+  <mat-card class="action-card">
+    <mat-card-content>
+      <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+
+      <form (ngSubmit)="onSubmit()" #form="ngForm">
+
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>Account Type</mat-label>
+          <mat-select [(ngModel)]="accountType" name="accountType" required>
+            <mat-option value="SAVINGS">Savings Account</mat-option>
+            <mat-option value="CHECKING">Checking Account</mat-option>
+            <mat-option value="FIXED">Fixed Deposit</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="accountType === 'FIXED'" appearance="outline" class="dark-input full-width slide-down">
+          <mat-label>Maturity Period</mat-label>
+          <mat-select [(ngModel)]="maturityMonths" name="maturityMonths" required>
+            <mat-option [value]="6">6 Months (5% p.a.)</mat-option>
+            <mat-option [value]="12">12 Months (8% p.a.)</mat-option>
+            <mat-option [value]="24">24 Months (10% p.a.)</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>Initial Deposit (LKR)</mat-label>
+          <input matInput type="number" [(ngModel)]="initialDeposit" name="initialDeposit" required [min]="minDeposit">
+          <mat-hint class="hint-text">Minimum deposit required: LKR {{ minDeposit | number }}</mat-hint>
+        </mat-form-field>
+
+        <button mat-flat-button color="accent" class="submit-btn full-width" type="submit" [disabled]="!form.valid || isLoading">
+          {{ isLoading ? 'Processing...' : 'Create Account' }}
+        </button>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

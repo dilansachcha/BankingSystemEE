@@ -26,7 +26,7 @@ public class ScheduledResource {
     @EJB
     private AccountService accountService;
 
-    // DTO for Angular JSON
+    // DTO
     public static class ScheduleRequest {
         public String fromAcc;
         public String toAcc;

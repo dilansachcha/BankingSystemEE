@@ -8,6 +8,8 @@ import { ScheduleNew } from './components/schedule-new/schedule-new';
 import { OpenAccountComponent } from './components/open-account/open-account';
 import { Register } from './components/register/register';
 import { authGuard } from './services/auth-guard';
+import {adminGuard} from './services/admin-guard';
+import {AdminDashboard} from './components/admin-dashboard/admin-dashboard';
 
 export const routes: Routes = [
   { path: '', component: Login },
@@ -17,5 +19,6 @@ export const routes: Routes = [
   { path: 'scheduled-list', component: ScheduledList, canActivate: [authGuard] },
   { path: 'schedule-new', component: ScheduleNew, canActivate: [authGuard] },
   { path: 'open-account', component: OpenAccountComponent },
-  { path: 'register', component: Register }
+  { path: 'register', component: Register },
+  { path: 'admin-dashboard', component: AdminDashboard, canActivate: [adminGuard] }
 ];

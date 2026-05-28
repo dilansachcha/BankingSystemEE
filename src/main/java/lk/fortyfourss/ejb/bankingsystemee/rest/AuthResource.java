@@ -30,7 +30,10 @@ public class AuthResource {
         if (envKey != null && !envKey.trim().isEmpty()) {
             return Keys.hmacShaKeyFor(envKey.getBytes());
         }
-        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+        //for local only
+        String devKey = "FortressBankingMegaSecretKeyThatIsAtLeast32Bytes!";
+        return Keys.hmacShaKeyFor(devKey.getBytes());
     }
 
     public static class LoginRequest {

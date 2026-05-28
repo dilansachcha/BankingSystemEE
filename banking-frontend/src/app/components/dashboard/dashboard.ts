@@ -8,6 +8,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { AccountService, Account } from '../../services/account';
 import { Router, RouterModule } from '@angular/router';
 import { FixedActionDialogComponent } from '../fixed-action-dialog/fixed-action-dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +20,8 @@ import { FixedActionDialogComponent } from '../fixed-action-dialog/fixed-action-
     MatIconModule,
     MatProgressSpinnerModule,
     RouterModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSnackBarModule
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
@@ -34,6 +36,7 @@ export class Dashboard implements OnInit {
   private router = inject(Router);
   private accountService = inject(AccountService);
   private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
 
   ngOnInit() {
     this.fetchAccounts();
@@ -63,7 +66,7 @@ export class Dashboard implements OnInit {
     const validTargets = this.activeAccounts.filter(a => a.accountType !== 'FIXED');
 
     if (validTargets.length === 0) {
-      alert("You need an active Savings or Checking account to receive these funds.");
+      this.showNotification("You need an active Savings or Checking account to receive these funds.", true);
       return;
     }
 
@@ -82,21 +85,30 @@ export class Dashboard implements OnInit {
         if (action === 'withdraw') {
           this.accountService.withdrawMatured(fixedAccount.id, selectedTargetId).subscribe({
             next: (res) => {
-              alert(res.message || "Successfully withdrawn!");
-              this.fetchAccounts(); // <-- Refreshes the dashboard automatically!
+              this.showNotification(res.message || "Successfully withdrawn!");
+              this.fetchAccounts();
             },
-            error: (err) => alert("Error: " + (err.error?.error || "Transaction failed"))
+            error: (err) => this.showNotification("Error: " + (err.error?.error || "Transaction failed"), true)
           });
         } else if (action === 'close') {
           this.accountService.closeFixedDeposit(fixedAccount.id, selectedTargetId).subscribe({
             next: (res) => {
-              alert(res.message || "Fixed Deposit successfully closed!");
-              this.fetchAccounts(); // <-- Refreshes the dashboard automatically!
+              this.showNotification(res.message || "Fixed Deposit successfully closed!");
+              this.fetchAccounts();
             },
-            error: (err) => alert("Error: " + (err.error?.error || "Transaction failed"))
+            error: (err) => this.showNotification("Error: " + (err.error?.error || "Transaction failed"), true)
           });
         }
       }
+    });
+  }
+
+  showNotification(message: string, isError: boolean = false) {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      panelClass: isError ? ['error-snackbar'] : ['success-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom'
     });
   }
 }

@@ -32,7 +32,6 @@ public class HistoryResource {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
 
-            // Fetch trans via JWT userId
             List<Transaction> transactions = historyService.getTransactionsByUserId(userId);
 
             List<Map<String, Object>> safeList = new ArrayList<>();

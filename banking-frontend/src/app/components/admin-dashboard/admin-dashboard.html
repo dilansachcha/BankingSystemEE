@@ -1,0 +1,164 @@
+<div class="dashboard-container">
+  <header class="top-nav admin-nav">
+    <div class="logo-container">
+      <img src="bankingsyslogo.png" alt="Fortress Banking Logo" class="brand-logo">
+      <span class="admin-badge">ADMIN CONSOLE</span>
+    </div>
+    <div class="header-actions">
+      <button mat-button class="audit-btn" (click)="downloadAudit()" [disabled]="isDownloading">
+        <mat-icon *ngIf="!isDownloading">picture_as_pdf</mat-icon>
+        <mat-spinner *ngIf="isDownloading" diameter="20" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></mat-spinner>
+        {{ isDownloading ? 'Generating...' : 'Audit Report' }}
+      </button>
+      <button mat-icon-button (click)="logout()" class="logout-btn"><mat-icon>logout</mat-icon></button>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <mat-card class="live-feed-card">
+      <mat-card-header>
+        <mat-card-title><span class="pulsing-dot"></span> Live Bank Activity Feed</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="liveAlerts.length === 0" class="empty-feed">Waiting for system activity...</div>
+        <div *ngFor="let alert of liveAlerts" class="feed-item slide-in">
+          {{ alert }}
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div *ngIf="isLoading" class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <ng-container *ngIf="!isLoading">
+
+      <h1>Pending Approvals <span class="badge" *ngIf="pendingUsers.length > 0">{{ pendingUsers.length }}</span></h1>
+      <div class="cards-grid">
+        <mat-card *ngFor="let u of pendingUsers" class="admin-card">
+          <mat-card-header>
+            <mat-card-title>{{ u.fullName }}</mat-card-title>
+            <mat-card-subtitle>{{ u.email }} | NIC: {{ u.nic }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-actions>
+            <button mat-flat-button color="primary" class="approve-btn" (click)="openApproveDialog(u.id)">
+              <mat-icon>check_circle</mat-icon> Approve User
+            </button>
+          </mat-card-actions>
+        </mat-card>
+        <div *ngIf="pendingUsers.length === 0" class="no-data">No pending users.</div>
+      </div>
+
+      <h1 class="section-title">Global Account Directory</h1>
+      <table class="dark-table">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Account No.</th>
+          <th>Type</th>
+          <th>Balance</th>
+          <th>Owner Email</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let acc of allAccounts">
+          <td>{{ acc.id }}</td>
+          <td class="mono">{{ acc.accountNumber }}</td>
+          <td>{{ acc.accountType }}</td>
+          <td class="mono">LKR {{ acc.balance | number:'1.2-2' }}</td>
+          <td>{{ acc.user?.email || 'N/A' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="acc.status.toLowerCase()">{{ acc.status }}</span>
+          </td>
+          <td>
+            <button mat-flat-button color="accent" class="ai-btn" style="margin-right: 8px;"
+                    (click)="analyzeRisk(acc.user.id, acc.user.email)"
+                    [disabled]="analyzingUserId === acc.user.id">
+              <mat-icon *ngIf="analyzingUserId !== acc.user.id">psychology</mat-icon>
+              <mat-spinner *ngIf="analyzingUserId === acc.user.id" diameter="18" style="display: inline-block; vertical-align: middle;"></mat-spinner>
+              AI Risk
+            </button>
+
+            <button *ngIf="acc.status === 'ACTIVE'" mat-flat-button color="warn" class="block-btn" (click)="openToggleDialog(acc.id, acc.status)">BLOCK</button>
+            <button *ngIf="acc.status === 'BLOCKED'" mat-flat-button class="unblock-btn" (click)="openToggleDialog(acc.id, acc.status)">UNBLOCK</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+    </ng-container>
+  </main>
+</div>
+
+<ng-template #actionDialog>
+  <div class="dialog-container" style="background-color: #121214; padding: 10px; border-radius: 8px;">
+
+    <h2 mat-dialog-title style="color: white; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">
+      <mat-icon *ngIf="['ai-result', 'ai-processing'].includes(actionPayload.type)" style="color: #8b5cf6;">psychology</mat-icon>
+      {{ actionPayload.type === 'block' ? 'Block Account' :
+      (actionPayload.type === 'unblock' ? 'Unblock Account' :
+        (actionPayload.type === 'ai-processing' ? 'Analyzing Risk...' :
+          (actionPayload.type === 'ai-result' ? 'AI Risk Analysis' :
+            (actionPayload.type === 'error' ? 'Service Error' : 'Approve User')))) }}
+    </h2>
+
+    <mat-dialog-content>
+      <div *ngIf="actionPayload.type === 'ai-processing'" style="text-align: center; padding: 40px;">
+        <mat-spinner diameter="50" style="margin: 0 auto;"></mat-spinner>
+        <p style="color: #8b5cf6; margin-top: 20px; font-weight: bold;">{{ currentAiStatus }}</p>
+        <p style="color: #a1a1aa; font-size: 12px;">The system is checking multiple models for availability...</p>
+      </div>
+
+      <p style="color: #a1a1aa; margin-bottom: 20px;" *ngIf="actionPayload.type === 'approve'">Are you sure you want to approve this user for banking access?</p>
+      <p style="color: #a1a1aa; margin-bottom: 20px;" *ngIf="actionPayload.type === 'unblock'">Are you sure you want to restore access to this account?</p>
+
+      <div *ngIf="actionPayload.type === 'block'">
+        <p style="color: #a1a1aa; margin-bottom: 20px;">Please provide a reason for blocking this account. The user will receive this via email.</p>
+        <mat-form-field appearance="outline" class="dark-input" style="width: 100%;">
+          <mat-label>Reason for blocking</mat-label>
+          <input matInput [(ngModel)]="actionPayload.reason" required>
+        </mat-form-field>
+      </div>
+
+      <div *ngIf="actionPayload.type === 'ai-result'">
+        <p style="color: #a1a1aa; margin-bottom: 15px;">Analysis for: <strong>{{ actionPayload.email }}</strong></p>
+        <div style="background-color: rgba(139, 92, 246, 0.1); border-left: 3px solid #8b5cf6; padding: 15px; border-radius: 4px; max-height: 400px; overflow-y: auto;">
+
+          <div style="color: #e4e4e7; line-height: 1.6; font-size: 14px;" [innerHTML]="actionPayload.analysis"></div>
+
+        </div>
+      </div>
+
+      <div *ngIf="actionPayload.type === 'error'" style="text-align: center; padding: 20px;">
+        <mat-icon style="color: #ef4444; font-size: 48px; height: 48px; width: 48px;">error_outline</mat-icon>
+        <p style="color: #ef4444; font-weight: bold; margin-top: 10px;">Service Unavailable</p>
+        <p style="color: #a1a1aa;">{{ actionPayload.message }}</p>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" style="padding-top: 10px;">
+
+      <button *ngIf="['block', 'unblock', 'approve'].includes(actionPayload.type)"
+              mat-button (click)="dialogRef.close()" style="color: #a1a1aa;">
+        Cancel
+      </button>
+
+      <button *ngIf="['block', 'unblock', 'approve'].includes(actionPayload.type)"
+              mat-flat-button [color]="actionPayload.type === 'block' ? 'warn' : 'accent'"
+              [disabled]="actionPayload.type === 'block' && !actionPayload.reason"
+              (click)="executeAction()">
+        Confirm
+      </button>
+
+      <button *ngIf="['ai-result', 'error'].includes(actionPayload.type)"
+              mat-flat-button color="primary" (click)="dialogRef.close()"
+              style="background-color: #8b5cf6;">
+        Dismiss
+      </button>
+
+    </mat-dialog-actions>
+  </div>
+</ng-template>

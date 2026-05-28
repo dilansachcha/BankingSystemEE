@@ -1,0 +1,138 @@
+.form-container {
+  min-height: 100vh;
+  background-color: #0a0a0c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  color: white;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 20px;
+
+  .back-btn {
+    color: white;
+    margin-right: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 500;
+  }
+}
+
+.action-card {
+  width: 100%;
+  max-width: 500px;
+  background-color: #121214;
+  border-radius: 12px;
+  padding: 30px 20px 20px 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.slide-down {
+  animation: fadeIn 0.3s ease-in-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.error-msg {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  text-align: center;
+  font-weight: 500;
+}
+
+//OVERRIDES
+::ng-deep .dark-input {
+  .mat-mdc-input-element, .mat-mdc-select-value-text {
+    color: white !important;
+  }
+  .mat-mdc-floating-label {
+    color: #a1a1aa !important;
+  }
+
+  --mdc-outlined-text-field-hover-outline-color: #ef4444 !important;
+  --mdc-outlined-text-field-focus-outline-color: #ef4444 !important;
+
+  --mdc-outlined-text-field-focus-label-text-color: #ef4444 !important;
+
+  --mat-select-focused-arrow-color: #ef4444 !important;
+}
+
+::ng-deep .dark-input.mat-focused .mdc-notched-outline__leading,
+::ng-deep .dark-input.mat-focused .mdc-notched-outline__notch,
+::ng-deep .dark-input.mat-focused .mdc-notched-outline__trailing,
+::ng-deep .dark-input:hover .mdc-notched-outline__leading,
+::ng-deep .dark-input:hover .mdc-notched-outline__notch,
+::ng-deep .dark-input:hover .mdc-notched-outline__trailing {
+  border-color: #ef4444 !important;
+}
+
+::ng-deep .hint-text {
+  color: #a1a1aa !important;
+}
+
+::ng-deep .submit-btn {
+  width: 100% !important;
+  min-height: 54px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  margin-top: 5px !important;
+
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+}
+
+::ng-deep .submit-btn:not(:disabled) {
+  background-color: #ef4444 !important;
+  color: white !important;
+}
+
+::ng-deep .submit-btn:not(:disabled):hover {
+  background-color: #dc2626 !important;
+}
+
+::ng-deep .submit-btn:disabled {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #666 !important;
+}
+
+::ng-deep .mat-mdc-select-panel {
+  background-color: #1a1a1d !important;
+}
+::ng-deep .mat-mdc-option {
+  color: white !important;
+}
+::ng-deep .mat-mdc-option:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+::ng-deep .mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) .mdc-list-item__primary-text {
+  color: #ef4444 !important;
+}

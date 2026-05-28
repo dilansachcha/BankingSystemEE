@@ -1,0 +1,85 @@
+<div class="page-container">
+  <mat-card class="history-card">
+    <mat-card-header>
+      <mat-card-title>Scheduled Transfers</mat-card-title>
+      <div class="header-buttons">
+        <button mat-button class="back-btn" routerLink="/dashboard">Dashboard</button>
+        <button mat-flat-button color="accent" routerLink="/schedule-new">
+          <mat-icon>add</mat-icon> Create New
+        </button>
+      </div>
+    </mat-card-header>
+
+    <div *ngIf="isLoading" class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+
+    <mat-card-content *ngIf="!isLoading && !errorMessage">
+      <table mat-table [dataSource]="schedules" class="mat-elevation-z8 dark-table">
+
+        <ng-container matColumnDef="scheduledTime">
+          <th mat-header-cell *matHeaderCellDef> Next Execution </th>
+          <td mat-cell *matCellDef="let element"> {{ element.scheduledTime | date:'medium' }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fromAccount">
+          <th mat-header-cell *matHeaderCellDef> From </th>
+          <td mat-cell *matCellDef="let element" class="mono"> {{ element.fromAccount }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="toAccount">
+          <th mat-header-cell *matHeaderCellDef> To </th>
+          <td mat-cell *matCellDef="let element" class="mono"> {{ element.toAccount }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef> Amount </th>
+          <td mat-cell *matCellDef="let element" class="amount-cell"> LKR {{ element.amount | number:'1.2-2' }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="recurring">
+          <th mat-header-cell *matHeaderCellDef> Frequency </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="type-badge" [ngClass]="element.recurring ? 'recurring' : 'onetime'">
+              {{ element.recurring ? element.recurrenceType : 'One-Time' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let element">
+            <span class="type-badge pending">{{ element.status }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastExecuted">
+          <th mat-header-cell *matHeaderCellDef> Last Executed </th>
+          <td mat-cell *matCellDef="let element">
+            <span style="color: #a1a1aa; font-size: 13px;">
+              {{ element.lastExecuted === 'Never' ? 'Never' : (element.lastExecuted | date:'short') }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="right-align"> Actions </th>
+          <td mat-cell *matCellDef="let element" class="right-align">
+            <button mat-icon-button color="warn" title="Cancel Schedule" (click)="deleteSchedule(element.id)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="schedules.length === 0" class="no-data">
+        You have no upcoming scheduled transfers.
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

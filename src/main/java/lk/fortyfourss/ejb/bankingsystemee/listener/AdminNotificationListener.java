@@ -8,10 +8,12 @@ import jakarta.jms.MessageListener;
 import jakarta.jms.TextMessage;
 import lk.fortyfourss.ejb.bankingsystemee.websocket.AdminNotificationWebSocket;
 
-@MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "jms/NewUserTopic"),
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Topic")
-})
+//@MessageDriven(
+//        activationConfig = {
+//                @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "jms/NewUserTopic"),
+//                @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Topic")
+//        }
+//)
 public class AdminNotificationListener implements MessageListener {
 
     @Inject

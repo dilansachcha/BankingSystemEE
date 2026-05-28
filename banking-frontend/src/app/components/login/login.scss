@@ -162,3 +162,36 @@
     box-shadow: none !important;
   }
 }
+
+::ng-deep .cancel-btn,
+::ng-deep .cancel-btn .mdc-button__label {
+  color: #a1a1aa !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+::ng-deep .cancel-btn {
+  margin-top: 10px !important;
+}
+
+::ng-deep .cancel-btn:hover,
+::ng-deep .cancel-btn:hover .mdc-button__label {
+  color: white !important;
+}
+
+::ng-deep .cancel-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+::ng-deep .otp-input-field {
+  letter-spacing: 0.8em !important;
+  text-align: center !important;
+  font-family: monospace !important;
+  font-size: 22px !important;
+  font-weight: bold !important;
+  color: #ef4444 !important;
+}
+
+::ng-deep .otp-input-field + .mat-mdc-form-field-icon-prefix {
+  display: none !important;
+}

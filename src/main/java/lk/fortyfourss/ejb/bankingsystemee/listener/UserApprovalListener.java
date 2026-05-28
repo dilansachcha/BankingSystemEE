@@ -15,12 +15,12 @@ import jakarta.mail.internet.MimeMessage;
 
 import java.util.Properties;
 
-@MessageDriven(
-        activationConfig = {
-                @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "jms/NewUserTopic"),
-                @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Topic")
-        }
-)
+//@MessageDriven(
+//        activationConfig = {
+//                @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "jms/NewUserTopic"),
+//                @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Topic")
+//        }
+//)
 public class UserApprovalListener implements MessageListener {
 
     @Override

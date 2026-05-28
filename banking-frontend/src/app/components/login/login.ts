@@ -35,18 +35,24 @@ export class Login {
   isForgotMode = false;
   isResetMode = false;
 
+  timeLeft: number = 180; // 3 mins
+  timerInterval: any;
+  canResend: boolean = false;
+
   private authService = inject(AuthService);
   private router = inject(Router);
 
   onSubmit() {
     this.errorMessage = '';
     this.isLoading = true;
+
     this.authService.login(this.email, this.password).subscribe({
       next: (res) => {
         this.isLoading = false;
         if (res.status === 'pending_verification') {
           this.isOtpMode = true;
           this.successMessage = "Admin detected. An OTP has been sent to your email.";
+          this.startTimer();
           return;
         }
         localStorage.setItem('token', res.token);
@@ -56,6 +62,45 @@ export class Login {
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err.error?.error || 'Invalid email or password.';
+      }
+    });
+  }
+
+  startTimer() {
+    this.timeLeft = 180;
+    this.canResend = false;
+    clearInterval(this.timerInterval);
+
+    this.timerInterval = setInterval(() => {
+      if (this.timeLeft > 0) {
+        this.timeLeft--;
+      } else {
+        this.canResend = true;
+        clearInterval(this.timerInterval);
+      }
+    }, 1000);
+  }
+
+  get formattedTime() {
+    const minutes: number = Math.floor(this.timeLeft / 60);
+    const seconds: number = this.timeLeft % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  }
+
+  onResendOtp() {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.isLoading = true;
+
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.successMessage = "A new OTP has been sent to your email.";
+        this.startTimer(); //Restart
+      },
+      error: () => {
+        this.isLoading = false;
+        this.errorMessage = "Failed to resend OTP. Please try again.";
       }
     });
   }
@@ -85,7 +130,7 @@ export class Login {
         this.isLoading = false;
         this.successMessage = res.message;
         this.isForgotMode = false;
-        this.isResetMode = true; // Move to the reset password screen!
+        this.isResetMode = true;
       },
       error: (err) => {
         this.isLoading = false;
@@ -128,11 +173,12 @@ export class Login {
   }
 
   cancelFlows() {
+    clearInterval(this.timerInterval);
     this.isOtpMode = false;
     this.isForgotMode = false;
     this.isResetMode = false;
     this.errorMessage = '';
-    this.password = ''; // clear password fields for security
+    this.password = '';
     this.newPassword = '';
     this.confirmPassword = '';
     this.otp = '';

@@ -37,3 +37,20 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+
+//Snackbar
+.success-snackbar {
+  background-color: #121214 !important;
+  color: #10b981 !important; /* Emerald Green */
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+.error-snackbar {
+  background-color: #121214 !important;
+  color: #ef4444 !important; /* Fortress Red */
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+}
+
+//Close btn
+.success-snackbar .mat-mdc-button .mdc-button__label { color: #10b981 !important; }
+.error-snackbar .mat-mdc-button .mdc-button__label { color: #ef4444 !important; }

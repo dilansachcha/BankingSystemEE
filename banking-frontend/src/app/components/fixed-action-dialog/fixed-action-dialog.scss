@@ -1,0 +1,81 @@
+.dialog-container {
+  background-color: #121214;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+
+  h2 {
+    color: white;
+    margin-bottom: 5px;
+  }
+
+  .subtitle {
+    color: #a1a1aa;
+    margin-bottom: 20px;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .actions {
+    padding-top: 10px;
+  }
+
+  ::ng-deep .confirm-btn:not(:disabled) {
+    background-color: #ef4444 !important;
+    color: white !important;
+  }
+  ::ng-deep .confirm-btn:disabled {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #a1a1aa !important;
+  }
+}
+
+::ng-deep .dark-input .mat-mdc-text-field-wrapper {
+  background-color: #0a0a0c !important;
+}
+::ng-deep .dark-input .mat-mdc-select-value-text {
+  color: white !important;
+}
+::ng-deep .dark-input .mat-mdc-floating-label {
+  color: #a1a1aa !important;
+}
+
+::ng-deep .dark-input {
+  --mdc-outlined-text-field-hover-outline-color: #ef4444 !important;
+  --mdc-outlined-text-field-focus-outline-color: #ef4444 !important;
+  --mdc-outlined-text-field-focus-label-text-color: #ef4444 !important;
+  --mat-select-focused-arrow-color: #ef4444 !important;
+}
+
+::ng-deep .dark-input.mat-focused .mdc-notched-outline__leading,
+::ng-deep .dark-input.mat-focused .mdc-notched-outline__notch,
+::ng-deep .dark-input.mat-focused .mdc-notched-outline__trailing,
+::ng-deep .dark-input:hover .mdc-notched-outline__leading,
+::ng-deep .dark-input:hover .mdc-notched-outline__notch,
+::ng-deep .dark-input:hover .mdc-notched-outline__trailing {
+  border-color: #ef4444 !important;
+}
+
+::ng-deep .mat-mdc-select-panel {
+  background-color: #1a1a1d !important;
+}
+::ng-deep .mat-mdc-option {
+  color: white !important;
+}
+::ng-deep .mat-mdc-option:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+::ng-deep .mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) .mdc-list-item__primary-text {
+  color: #ef4444 !important;
+}
+
+/* Clean up the Cancel button */
+::ng-deep .cancel-btn {
+  color: #a1a1aa !important;
+}
+::ng-deep .cancel-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: white !important;
+}

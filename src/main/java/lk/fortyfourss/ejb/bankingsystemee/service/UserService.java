@@ -66,7 +66,7 @@ public class UserService {
         if (isCorrect && user.getPassword().length() == 64) {
             user.setPassword(EncryptionUtil.hashPassword(password));
             em.merge(user);
-            System.out.println("🔒 [Security] Upgraded user " + email + " to BCrypt!");
+            System.out.println("[Security] Upgraded user " + email + " to BCrypt!");
         }
 
         return isCorrect;
@@ -189,8 +189,5 @@ public class UserService {
             em.merge(user);
         }
     }
-
-
-
 
 }

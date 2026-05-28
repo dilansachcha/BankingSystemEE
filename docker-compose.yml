@@ -1,5 +1,6 @@
 version: "3.8"
 services:
+  #MySQL
   db:
     image: mysql:8.0
     environment:
@@ -7,10 +8,39 @@ services:
       MYSQL_DATABASE: bankingsys
     ports:
       - "3307:3306"
+    networks:
+      - banking-network
+    healthcheck:
+      test: ["CMD", "mysql", "-u", "root", "-paqimcmp5", "-e", "SELECT 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-  app:
+  #Backend & GlassFish
+  backend:
     build: .
     ports:
       - "8080:8080"
+      - "4848:4848"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - banking-network
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - XAI_API_KEY=${XAI_API_KEY}
+
+  #Angular Frontend
+  frontend:
+    build: ./banking-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - banking-network
+
+networks:
+  banking-network:
+    driver: bridge

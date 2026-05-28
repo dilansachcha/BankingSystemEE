@@ -1,0 +1,64 @@
+<div class="page-container">
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Schedule a Transfer</mat-card-title>
+      <mat-card-subtitle>Set up future or recurring payments.</mat-card-subtitle>
+    </mat-card-header>
+
+    <div *ngIf="isLoading" class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <mat-card-content *ngIf="!isLoading">
+      <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
+      <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
+
+      <form [formGroup]="scheduleForm" (ngSubmit)="onSubmit()" class="transfer-form">
+
+        <mat-form-field appearance="outline">
+          <mat-label>From Account</mat-label>
+          <mat-select formControlName="fromAcc">
+            <mat-option *ngFor="let acc of myAccounts" [value]="acc.accountNumber">
+              {{ acc.accountNumber }} (LKR {{ acc.balance | number:'1.2-2' }})
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Recipient Account Number</mat-label>
+          <input matInput formControlName="toAcc" placeholder="e.g. USR12-SAV-XXXXX">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Amount (LKR)</mat-label>
+          <input matInput type="number" formControlName="amount" min="1">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Schedule Date & Time</mat-label>
+          <input matInput type="datetime-local" formControlName="scheduledTime">
+        </mat-form-field>
+
+        <mat-checkbox formControlName="recurring" class="recurring-checkbox">
+          Make this a recurring transfer
+        </mat-checkbox>
+
+        <mat-form-field appearance="outline" *ngIf="scheduleForm.get('recurring')?.value">
+          <mat-label>Recurrence Frequency</mat-label>
+          <mat-select formControlName="recurrenceType">
+            <mat-option value="DAILY">Daily</mat-option>
+            <mat-option value="WEEKLY">Weekly</mat-option>
+            <mat-option value="MONTHLY">Monthly</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-button type="button" routerLink="/scheduled-list">Cancel</button>
+          <button mat-flat-button color="accent" type="submit" [disabled]="scheduleForm.invalid || isSubmitting">
+            {{ isSubmitting ? 'Scheduling...' : 'Confirm Schedule' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

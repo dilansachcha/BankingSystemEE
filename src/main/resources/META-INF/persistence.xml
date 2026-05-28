@@ -1,7 +1,7 @@
-<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
-             version="3.0">
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
     <persistence-unit name="bankingPU" transaction-type="JTA">
-        <jta-data-source>jdbc/bankingsys</jta-data-source>
+
+        <jta-data-source>java:app/jdbc/bankingsys</jta-data-source>
 
         <class>lk.fortyfourss.ejb.bankingsystemee.model.User</class>
         <class>lk.fortyfourss.ejb.bankingsystemee.model.Account</class>
@@ -11,13 +11,12 @@
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/bankingsys?useSSL=false&amp;allowPublicKeyRetrieval=true"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://db:3306/bankingsys?useSSL=false&amp;allowPublicKeyRetrieval=true"/>
             <property name="jakarta.persistence.jdbc.user" value="root"/>
             <property name="jakarta.persistence.jdbc.password" value="aqimcmp5"/>
-
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
+            <property name="eclipselink.cache.shared.default" value="false"/>
         </properties>
     </persistence-unit>
 </persistence>
-

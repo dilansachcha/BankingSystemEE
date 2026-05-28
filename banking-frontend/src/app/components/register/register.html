@@ -1,0 +1,71 @@
+<div class="login-wrapper">
+  <mat-card class="glass-card">
+
+    <div class="header-container">
+      <button mat-icon-button routerLink="/" class="back-btn"><mat-icon>arrow_back</mat-icon></button>
+      <div class="logo-container">
+        <img src="bankingsyslogo.png" alt="Fortress Banking Logo" class="brand-logo">
+      </div>
+      <div style="width: 40px;"></div>
+    </div>
+
+    <h2 class="welcome-text">Create an Account</h2>
+    <p class="subtitle">Join Fortress Banking System today.</p>
+
+    <mat-card-content>
+      <!-- MESSAGES -->
+      <div class="error-msg" *ngIf="errorMessage">
+        <mat-icon>error_outline</mat-icon> {{ errorMessage }}
+      </div>
+      <div class="success-msg" *ngIf="successMessage">
+        <mat-icon>check_circle</mat-icon> {{ successMessage }}
+      </div>
+
+      <form (ngSubmit)="onSubmit()" *ngIf="!successMessage">
+
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>Full Name</mat-label>
+          <input matInput type="text" name="fullName" [(ngModel)]="fullName" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>Email Address</mat-label>
+          <input matInput type="email" name="email" [(ngModel)]="email" required>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="dark-input half-width">
+            <mat-label>NIC Number</mat-label>
+            <input matInput type="text" name="nic" [(ngModel)]="nic" required>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="dark-input half-width">
+            <mat-label>Mobile (07XXXXXXXX)</mat-label>
+            <input matInput type="text" name="mobile" [(ngModel)]="mobile" required>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>Password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" name="password" [(ngModel)]="password" required>
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="dark-input full-width">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput [type]="hideConfirm ? 'password' : 'text'" name="confirmPassword" [(ngModel)]="confirmPassword" required>
+          <button mat-icon-button matSuffix (click)="hideConfirm = !hideConfirm" type="button">
+            <mat-icon>{{hideConfirm ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <button mat-flat-button type="submit" class="neon-btn full-width" [disabled]="!fullName || !email || !nic || !mobile || !password || !confirmPassword || isLoading">
+          {{ isLoading ? 'Processing...' : 'Register' }}
+        </button>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

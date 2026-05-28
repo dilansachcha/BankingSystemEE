@@ -47,7 +47,7 @@
 .success { background-color: rgba(34, 197, 94, 0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
 .spinner-container { display: flex; justify-content: center; padding: 40px; }
 
-/*overrides*/
+//overrides
 ::ng-deep input.mat-mdc-input-element,
 ::ng-deep .mat-mdc-select-value-text {
   color: white !important;

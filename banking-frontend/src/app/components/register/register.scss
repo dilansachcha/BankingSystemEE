@@ -1,0 +1,201 @@
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #0a0a0c;
+  background-image: radial-gradient(circle at top center, #16161e 0%, #0a0a0c 100%);
+  font-family: 'Roboto', sans-serif;
+}
+
+.glass-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 35px;
+  background-color: #121214 !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(239, 68, 68, 0.1) !important;
+  color: #ffffff;
+}
+
+.logo-container {
+  text-align: center;
+  margin-top: -10px;
+  margin-bottom: 10px;
+
+  .brand-logo {
+    max-width: 280px;
+    height: auto;
+    opacity: 0.95;
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));
+  }
+}
+
+.welcome-text {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 13px;
+  color: #888888;
+  margin-bottom: 30px;
+}
+
+/* Red Links */
+.accent-link {
+  color: #ef4444;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #f87171;
+    text-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
+  }
+}
+
+.forgot-pwd {
+  text-align: center;
+  margin-bottom: 25px;
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+//Override
+::ng-deep .dark-input {
+
+  input.mat-mdc-input-element,
+  .mdc-text-field__input {
+    color: #ffffff !important;
+    caret-color: #ef4444 !important;
+    -webkit-text-fill-color: #ffffff !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .mdc-floating-label {
+    color: #777777 !important;
+  }
+  .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-icon-button {
+    color: #777777 !important;
+    padding-right: 10px;
+  }
+
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: #333333 !important;
+    border-width: 1px !important;
+    transition: border-color 0.2s ease;
+  }
+
+  &:hover .mdc-notched-outline__leading,
+  &:hover .mdc-notched-outline__notch,
+  &:hover .mdc-notched-outline__trailing {
+    border-color: #ef4444 !important;
+  }
+
+  &.mat-focused .mdc-notched-outline__leading,
+  &.mat-focused .mdc-notched-outline__notch,
+  &.mat-focused .mdc-notched-outline__trailing,
+  &.mat-form-field-invalid .mdc-notched-outline__leading,
+  &.mat-form-field-invalid .mdc-notched-outline__notch,
+  &.mat-form-field-invalid .mdc-notched-outline__trailing {
+    border-color: #ef4444 !important;
+    border-width: 2px !important;
+  }
+
+  &.mat-focused .mdc-floating-label,
+  &.mat-form-field-invalid .mdc-floating-label,
+  &.mat-focused .mat-mdc-form-field-icon-prefix,
+  &.mat-form-field-invalid .mat-mdc-form-field-icon-prefix {
+    color: #ef4444 !important;
+  }
+}
+
+.error-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  padding: 12px 15px;
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+
+.neon-btn {
+  padding: 26px 0 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  background-color: #ef4444 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2) !important;
+  transition: all 0.3s ease !important;
+
+  &:hover:not([disabled]) {
+    background-color: #dc2626 !important;
+    box-shadow: 0 6px 25px rgba(239, 68, 68, 0.5) !important;
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background-color: #1f1f23 !important;
+    color: #444444 !important;
+    box-shadow: none !important;
+  }
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .back-btn {
+    color: #a1a1aa;
+    &:hover { color: white; }
+  }
+  .logo-container { margin-bottom: 0; }
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+
+  .half-width {
+    flex: 1;
+  }
+}
+
+.success-msg {
+  background-color: rgba(16, 185, 129, 0.1); /* Emerald green */
+  color: #10b981;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  text-align: center;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}

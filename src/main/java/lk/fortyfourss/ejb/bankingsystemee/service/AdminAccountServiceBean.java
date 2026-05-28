@@ -1,5 +1,6 @@
 package lk.fortyfourss.ejb.bankingsystemee.service;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Properties;
 
 @Stateless
+@PermitAll
 public class AdminAccountServiceBean {
 
     @PersistenceContext(unitName = "bankingPU")
@@ -23,7 +25,6 @@ public class AdminAccountServiceBean {
         return em.createQuery("SELECT a FROM Account a ORDER BY a.createdAt DESC", Account.class).getResultList();
     }
 
-    @RolesAllowed("ADMIN")
     public void blockAccount(int accountId, String reason) {
         Account acc = em.find(Account.class, accountId);
         if (acc != null) {

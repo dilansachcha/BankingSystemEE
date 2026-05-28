@@ -1,0 +1,54 @@
+/* Just like history.scss, with minor tweaks for the buttons */
+.page-container { padding: 40px 20px; background-color: #0a0a0c; min-height: 100vh; display: flex; justify-content: center; }
+.history-card { width: 100%; max-width: 1100px; background-color: #121214 !important; color: white !important; border: 1px solid rgba(255, 255, 255, 0.05) !important; border-radius: 12px !important; }
+
+mat-card-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+  .mat-mdc-card-title { color: white; font-size: 24px; margin: 0; }
+}
+
+.header-buttons {
+  display: flex; gap: 15px; align-items: center;
+  .back-btn { color: #a1a1aa !important; }
+}
+
+.dark-table { background-color: transparent !important; width: 100%; }
+th.mat-mdc-header-cell { color: #a1a1aa !important; font-weight: bold; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+td.mat-mdc-cell { color: white !important; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 15px 10px; }
+
+.mono { font-family: monospace; color: #a1a1aa !important; }
+.right-align { text-align: right !important; justify-content: flex-end; }
+.amount-cell { font-weight: bold; font-family: monospace; font-size: 15px; color: #cca5a5 !important;}
+
+.type-badge {
+  padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;
+  &.onetime { background-color: rgba(161, 161, 170, 0.1); color: #a1a1aa; border: 1px solid rgba(161, 161, 170, 0.3);}
+  &.recurring { background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); } /* Blue */
+  &.pending { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); } /* Yellow */
+}
+
+::ng-deep .mat-mdc-icon-button.mat-warn { color: #ef4444 !important; }
+::ng-deep .mat-mdc-icon-button:hover { background-color: rgba(239, 68, 68, 0.1) !important; }
+
+.spinner-container { display: flex; justify-content: center; padding: 40px; }
+.error-msg, .no-data { text-align: center; color: #a1a1aa; padding: 30px; }
+
+/* Overrides for Header Buttons */
+::ng-deep .header-buttons .mat-mdc-unelevated-button.mat-accent {
+  background-color: #ef4444 !important;
+  color: white !important;
+}
+
+::ng-deep .header-buttons .mat-mdc-unelevated-button.mat-accent:hover {
+  background-color: #dc2626 !important;
+}
+
+::ng-deep .header-buttons .back-btn {
+  color: #a1a1aa !important;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .header-buttons .back-btn:hover {
+  color: white !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}

@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.StreamingOutput;
 import lk.fortyfourss.ejb.bankingsystemee.annotation.Secured;
 import lk.fortyfourss.ejb.bankingsystemee.model.Account;
 import lk.fortyfourss.ejb.bankingsystemee.model.Transaction;
+import lk.fortyfourss.ejb.bankingsystemee.model.User;
 import lk.fortyfourss.ejb.bankingsystemee.service.AdminAccountServiceBean;
 import lk.fortyfourss.ejb.bankingsystemee.service.TransactionServiceBean;
 import lk.fortyfourss.ejb.bankingsystemee.service.UserService;
@@ -54,12 +55,51 @@ public class AdminResource {
     public Response getDashboardData(@Context ContainerRequestContext requestContext) {
         requireAdmin(requestContext);
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("pendingUsers", userService.getPendingUsers());
-        data.put("allUsers", userService.getAllUsers());
-        data.put("allAccounts", adminAccountService.getAllAccounts());
+        try {
+            Map<String, Object> data = new HashMap<>();
 
-        return Response.ok(data).build();
+            //Users
+            List<User> rawPending = userService.getPendingUsers();
+            List<Map<String, Object>> safePending = new java.util.ArrayList<>();
+            for(User u : rawPending) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", u.getId());
+                map.put("fullName", u.getFullName());
+                map.put("email", u.getEmail());
+                map.put("nic", u.getNic());
+                safePending.add(map);
+            }
+            data.put("pendingUsers", safePending);
+
+            //Accounts
+            List<Account> rawAccounts = adminAccountService.getAllAccounts();
+            List<Map<String, Object>> safeAccounts = new java.util.ArrayList<>();
+            for(Account a : rawAccounts) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", a.getId());
+                map.put("accountNumber", a.getAccountNumber());
+                map.put("accountType", a.getAccountType());
+                map.put("balance", a.getBalance());
+                map.put("status", a.getStatus());
+
+                if(a.getUser() != null) {
+                    Map<String, Object> userMap = new HashMap<>();
+                    userMap.put("id", a.getUser().getId());
+                    userMap.put("email", a.getUser().getEmail());
+                    map.put("user", userMap);
+                }
+                safeAccounts.add(map);
+            }
+            data.put("allAccounts", safeAccounts);
+
+            return Response.ok(data).build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"Failed to load dashboard data.\"}")
+                    .build();
+        }
     }
 
     //Approve Pending User
@@ -71,6 +111,12 @@ public class AdminResource {
             String email = userService.findById(userId).getEmail();
             userService.approveUser(userId);
             notificationPublisher.sendUserApproved(email);
+
+            //to WebSocket
+            lk.fortyfourss.ejb.bankingsystemee.websocket.AdminNotificationWebSocket.broadcast(
+                    "{\"type\":\"ALERT\", \"message\":\"New User Approved: " + email + "\"}"
+            );
+
             return Response.ok("{\"message\":\"User approved successfully!\"}").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\":\"Failed to approve user.\"}").build();
@@ -90,11 +136,13 @@ public class AdminResource {
         try {
             if ("block".equalsIgnoreCase(req.action)) {
                 adminAccountService.blockAccount(accountId, req.reason != null ? req.reason : "Administrative Action");
-                // Trigger WebSocket so the feed updates live!
                 lk.fortyfourss.ejb.bankingsystemee.websocket.AdminNotificationWebSocket.broadcast("{\"type\":\"ALERT\", \"message\":\"Account " + accountId + " was BLOCKED.\"}");
                 return Response.ok("{\"message\":\"Account blocked successfully!\"}").build();
             } else if ("unblock".equalsIgnoreCase(req.action)) {
                 adminAccountService.unblockAccount(accountId);
+                lk.fortyfourss.ejb.bankingsystemee.websocket.AdminNotificationWebSocket.broadcast(
+                        "{\"type\":\"ALERT\", \"message\":\"Account " + accountId + " was UNBLOCKED.\"}"
+                );
                 return Response.ok("{\"message\":\"Account unblocked successfully!\"}").build();
             }
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"Invalid action.\"}").build();

@@ -1,0 +1,27 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>
+    {{ data.action === 'withdraw' ? 'Withdraw Matured Deposit' : 'Close Fixed Deposit' }}
+  </h2>
+
+  <mat-dialog-content>
+    <p class="subtitle">
+      Select the destination account to receive your funds from Fixed Deposit <strong>{{ data.fixedAccount.accountNumber }}</strong>.
+    </p>
+
+    <mat-form-field appearance="outline" class="dark-input full-width">
+      <mat-label>Destination Account</mat-label>
+      <mat-select [(ngModel)]="selectedTargetId">
+        <mat-option *ngFor="let acc of data.targetAccounts" [value]="acc.id">
+          {{ acc.accountNumber }} ({{ acc.accountType }}) - LKR {{ acc.balance | number:'1.2-2' }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="actions">
+    <button mat-button class="cancel-btn" (click)="onCancel()">Cancel</button>
+    <button mat-flat-button color="accent" class="confirm-btn" [disabled]="!selectedTargetId" (click)="onConfirm()">
+      Confirm
+    </button>
+  </mat-dialog-actions>
+</div>
