@@ -4,6 +4,35 @@ An **end-to-end secure, cloud-deployed banking system** coupling a highly respon
 
 ---
 
+## 🚀 Live Demo & Evaluation Guide
+
+The application is currently live, containerized, and deployed on a DigitalOcean Droplet.
+
+🔗 **[Access the Live Portal Here: http://159.65.148.173/](http://159.65.148.173/)**
+
+To fully experience the system's database persistence, Role-Based Access Control (RBAC), and security filters, we recommend following this end-to-end evaluation flow:
+
+### 1. The Standard Customer Flow (Registration)
+1. Navigate to the **[Sign Up](http://159.65.148.173/register)** page and register using your genuine email address (or a test email).
+2. *Behind the scenes:* The Java backend securely hashes your password via BCrypt and writes your profile to the MySQL database as a `CUSTOMER` with an `INACTIVE` status.
+3. If you attempt to log in immediately, the backend `AuthResource` catches your status and correctly restricts access, showing: *"Your account is pending Admin approval."*
+
+### 2. The Recruiter Admin Bypass ("God Mode")
+To evaluate the Admin Console without waiting for SMTP email OTPs, an optimized demo bypass has been integrated directly into the UI.
+1. Go to the **[Login Page](http://159.65.148.173/login)** and click the **"Load Recruiter Demo Admin"** button below the main form.
+2. The UI will auto-fill the Master Admin credentials (`admin@fortress.com`). Click **Login**.
+3. *Behind the scenes:* The backend recognizes this demo address and intelligently skips the slow JavaMail SMTP thread orchestration.
+4. The Angular form will advance and auto-inject the backend backdoor OTP code (`000000`). Click **Verify**.
+5. The JAX-RS endpoint validates the dynamic backdoor handshake, issues a secure stateless JWT, and drops you into the Admin Console instantly.
+
+### 3. Complete the Lifecycle
+1. From the Admin Console, review the live analytics and locate your newly registered Customer account sitting in the **Pending Approvals** directory.
+2. Click **Approve User** to flip their database status to `ACTIVE`.
+3. Log out of the Admin account, and log back in using the Customer credentials you created in Step 1.
+4. You now have full access to test the Customer Dashboard, manual/scheduled fund transfers, the PayHere checkout modal, and dynamic PDF receipt generation!
+
+---
+
 ## 📌 Core Features & Enterprise Capabilities
 
 ✅ **Decoupled Full-Stack Architecture:** Standalone Angular UI communicating securely with Jakarta EE REST endpoints (JAX-RS) via Nginx reverse proxies.
