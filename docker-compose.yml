@@ -10,6 +10,8 @@ services:
       - "3307:3306"
     networks:
       - banking-network
+    volumes:
+      - db_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysql", "-u", "root", "-paqimcmp5", "-e", "SELECT 1"]
       interval: 5s
@@ -33,7 +35,7 @@ services:
       - PAYHERE_MERCHANT_ID=${PAYHERE_MERCHANT_ID}
       - PAYHERE_MERCHANT_SECRET=${PAYHERE_MERCHANT_SECRET}
 
-  #Angular Frontend
+  #Frontend
   frontend:
     build: ./banking-frontend
     ports:
@@ -46,3 +48,6 @@ services:
 networks:
   banking-network:
     driver: bridge
+
+volumes:
+  db_data:
