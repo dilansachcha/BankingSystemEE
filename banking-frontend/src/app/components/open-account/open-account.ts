@@ -90,7 +90,7 @@ export class OpenAccountComponent {
       "merchant_id": data.merchantId,
       "return_url": window.location.origin + "/dashboard",
       "cancel_url": window.location.origin + "/dashboard",
-      "notify_url": "http://DROPLET_IP/BankingSystemEE-1.0-SNAPSHOT/api/payhere/notify",
+      "notify_url": "http://159.65.148.173:8080/BankingSystemEE-1.0-SNAPSHOT/api/payhere/notify",
       "order_id": data.orderId,
       "items": "Initial Deposit - " + this.accountType,
       "amount": depositAmount,
