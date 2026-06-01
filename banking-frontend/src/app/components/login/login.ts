@@ -51,7 +51,15 @@ export class Login {
         this.isLoading = false;
         if (res.status === 'pending_verification') {
           this.isOtpMode = true;
-          this.successMessage = "Admin detected. An OTP has been sent to your email.";
+
+          //demo
+          if (this.email === 'admin@fortress.com') {
+            this.successMessage = "Recruiter Mode Active. Bypass code loaded.";
+            this.otp = '000000';
+          } else {
+            this.successMessage = "Admin detected. An OTP has been sent to your email.";
+          }
+
           this.startTimer();
           return;
         }
@@ -183,5 +191,11 @@ export class Login {
     this.confirmPassword = '';
     this.otp = '';
     this.resetCode = '';
+  }
+
+  fillRecruiterCredentials() {
+    this.email = 'admin@fortress.com';
+    this.password = 'Admin@123';
+    this.errorMessage = '';
   }
 }

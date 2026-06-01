@@ -16,7 +16,6 @@
         <mat-icon style="vertical-align: middle;">check_circle</mat-icon> {{ successMessage }}
       </div>
 
-      <!-- 1. STANDARD LOGIN FORM -->
       <form (ngSubmit)="onSubmit()" *ngIf="!isOtpMode && !isForgotMode && !isResetMode">
         <mat-form-field appearance="outline" class="dark-input full-width">
           <mat-label>Email address</mat-label>
@@ -40,11 +39,22 @@
         <button mat-flat-button type="submit" class="neon-btn full-width" [disabled]="!email || !password || isLoading">
           {{ isLoading ? 'Authenticating...' : 'Login' }}
         </button>
+
+        <div class="recruiter-demo">
+          <button mat-stroked-button type="button" class="demo-btn full-width" (click)="fillRecruiterCredentials()">
+            <mat-icon>badge</mat-icon> Load Recruiter Demo Admin
+          </button>
+        </div>
       </form>
 
       <form (ngSubmit)="onVerifyOtp()" *ngIf="isOtpMode">
         <p style="text-align: center; color: #a1a1aa; margin-bottom: 20px;">
           Enter the 6-digit code sent to your email.
+        </p>
+
+        <p class="demo-hint" *ngIf="email === 'admin@fortress.com'">
+          <mat-icon style="vertical-align: middle; font-size: 16px; height: 16px; width: 16px;">info</mat-icon>
+          Demo Mode: Bypass code <b>000000</b> has been auto-filled.
         </p>
 
         <mat-form-field appearance="outline" class="dark-input full-width">

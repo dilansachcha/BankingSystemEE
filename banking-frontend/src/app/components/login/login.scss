@@ -195,3 +195,42 @@
 ::ng-deep .otp-input-field + .mat-mdc-form-field-icon-prefix {
   display: none !important;
 }
+
+.recruiter-demo {
+  margin-top: 20px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 20px;
+}
+
+::ng-deep .demo-btn {
+  color: #a1a1aa !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+  padding: 22px 0 !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+
+  .mat-icon {
+    margin-right: 8px;
+    color: #ef4444;
+  }
+
+  &:hover {
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.08) !important;
+  }
+}
+
+.demo-hint {
+  color: #10b981;
+  font-size: 13px;
+  margin-top: -15px;
+  margin-bottom: 20px;
+  text-align: center;
+  background-color: rgba(16, 185, 129, 0.1);
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}

