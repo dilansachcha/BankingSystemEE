@@ -98,8 +98,8 @@ export class OpenAccountComponent {
       "hash": data.hash,
       "first_name": "Valued",
       "last_name": "Customer",
-      "email": "customer@bankingsystemee.com",
-      "phone": "0771234567",
+      "email": "dilansachintha44@gmail.com",
+      "phone": "0771855521",
       "address": "No.1, 1st Cross Street, Pettah",
       "city": "Colombo",
       "country": "Sri Lanka"
