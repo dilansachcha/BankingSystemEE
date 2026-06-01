@@ -27,7 +27,7 @@ public class AccountCreationServiceBean {
     }
 
     @Audit
-    public void createAccount(User user, AccountType accountType, double initialDeposit, Integer maturityMonths) {
+    public String createAccount(User user, AccountType accountType, double initialDeposit, Integer maturityMonths) {
         long count = em.createQuery("SELECT COUNT(a) FROM Account a WHERE a.user = :user", Long.class)
                 .setParameter("user", user)
                 .getSingleResult();
@@ -56,9 +56,9 @@ public class AccountCreationServiceBean {
         account.setInitialDeposit(initialDeposit);
         account.setCreatedAt(LocalDateTime.now());
         account.setLastUpdated(LocalDateTime.now());
-        account.setStatus("ACTIVE");
 
-        // Maturity
+        account.setStatus("PENDING");
+
         if (accountType == AccountType.FIXED && maturityMonths != null) {
             account.setMaturityDate(LocalDateTime.now().plusMonths(maturityMonths));
             account.setMaturityStatus("ONGOING");
@@ -68,5 +68,6 @@ public class AccountCreationServiceBean {
         }
 
         em.persist(account);
+        return accNo;
     }
 }

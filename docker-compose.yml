@@ -30,6 +30,8 @@ services:
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - XAI_API_KEY=${XAI_API_KEY}
+      - PAYHERE_MERCHANT_ID=${PAYHERE_MERCHANT_ID}
+      - PAYHERE_MERCHANT_SECRET=${PAYHERE_MERCHANT_SECRET}
 
   #Angular Frontend
   frontend:

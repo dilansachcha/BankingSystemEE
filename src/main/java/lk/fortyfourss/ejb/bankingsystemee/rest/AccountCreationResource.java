@@ -6,6 +6,8 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.security.MessageDigest;
+import java.text.DecimalFormat;
 import lk.fortyfourss.ejb.bankingsystemee.annotation.Secured;
 import lk.fortyfourss.ejb.bankingsystemee.exception.AccountCreationException;
 import lk.fortyfourss.ejb.bankingsystemee.model.AccountType;
@@ -43,22 +45,47 @@ public class AccountCreationResource {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("{\"error\":\"User not found.\"}").build();
             }
 
-            AccountType type;
-            try {
-                type = AccountType.valueOf(request.accountType.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"Invalid Account Type.\"}").build();
-            }
+            AccountType type = AccountType.valueOf(request.accountType.toUpperCase());
 
-            accountCreationService.createAccount(user, type, request.initialDeposit, request.maturityMonths);
+            String orderId = accountCreationService.createAccount(user, type, request.initialDeposit, request.maturityMonths);
 
-            return Response.ok("{\"message\":\"" + type.name() + " Account created successfully!\"}").build();
+            String merchantId = System.getenv("PAYHERE_MERCHANT_ID");
+            String merchantSecret = System.getenv("PAYHERE_MERCHANT_SECRET");
+            String currency = "LKR";
+
+            DecimalFormat df = new DecimalFormat("0.00");
+            String formattedAmount = df.format(request.initialDeposit);
+
+            //MD5 Hash
+            String hashedSecret = getMd5(merchantSecret).toUpperCase();
+            String hashString = merchantId + orderId + formattedAmount + currency + hashedSecret;
+            String md5Hash = getMd5(hashString).toUpperCase();
+
+            String jsonResponse = String.format(
+                    "{\"message\":\"Pending Account Created\", \"orderId\":\"%s\", \"hash\":\"%s\", \"merchantId\":\"%s\", \"amount\":\"%s\"}",
+                    orderId, md5Hash, merchantId, formattedAmount
+            );
+
+            return Response.ok(jsonResponse).build();
 
         } catch (AccountCreationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"" + e.getMessage() + "\"}").build();
         } catch (Exception e) {
-            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\":\"An unexpected error occurred.\"}").build();
+        }
+    }
+
+    private String getMd5(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(input.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : messageDigest) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("MD5 conversion failed", e);
         }
     }
 }
