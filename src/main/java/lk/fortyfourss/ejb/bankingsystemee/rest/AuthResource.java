@@ -84,12 +84,16 @@ public class AuthResource {
         }
 
         if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            // Skip mail for demo
+            if ("admin@fortress.com".equalsIgnoreCase(request.email)) {
+                return Response.ok("{\"status\":\"pending_verification\", \"email\":\"" + request.email + "\"}").build();
+            }
+
             userService.assignAdminVerificationCode(request.email);
             return Response.ok("{\"status\":\"pending_verification\", \"email\":\"" + request.email + "\"}").build();
         }
 
         String token = generateJwtToken(user);
-
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("token", token);
         responseData.put("role", user.getRole());
@@ -115,8 +119,8 @@ public class AuthResource {
     @Path("/verify-admin")
     public Response verifyAdmin(VerifyRequest request) {
 
-        //demo backdoor
-        if ("admin@fortress.com".equals(request.email) && "000000".equals(request.otp)) {
+        //backdoor
+        if ("admin@fortress.com".equalsIgnoreCase(request.email) && "000000".equals(request.otp)) {
             User admin = userService.findByEmail(request.email);
             String token = generateJwtToken(admin);
             Map<String, Object> responseData = new HashMap<>();
