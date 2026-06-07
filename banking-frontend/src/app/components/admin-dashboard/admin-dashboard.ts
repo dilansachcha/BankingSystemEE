@@ -170,7 +170,7 @@ export class AdminDashboard implements OnInit, OnDestroy {
   }
 
   connectWebSocket() {
-    this.socket = new WebSocket("ws://localhost:8080/BankingSystemEE-1.0-SNAPSHOT/admin-notify");
+    this.socket = new WebSocket("ws://159.65.148.173:8080/BankingSystemEE-1.0-SNAPSHOT/admin-notify");
 
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);

@@ -10,8 +10,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { AccountService } from '../../services/account';
 
-declare var payhere: any;
-
 @Component({
   selector: 'app-open-account',
   standalone: true,
@@ -69,17 +67,17 @@ export class OpenAccountComponent {
   }
 
   triggerPayHere(data: any) {
-    payhere.onCompleted = (orderId: string) => {
+    (window as any).payhere.onCompleted = (orderId: string) => {
       alert("Payment successful! Your account is now ACTIVE.");
       this.router.navigate(['/dashboard']);
     };
 
-    payhere.onDismissed = () => {
+    (window as any).payhere.onDismissed = () => {
       alert("Payment dismissed. Your account remains PENDING until funded.");
       this.router.navigate(['/dashboard']);
     };
 
-    payhere.onError = (error: string) => {
+    (window as any).payhere.onError = (error: string) => {
       this.errorMessage = "Payment Error: " + error;
     };
 
@@ -105,6 +103,6 @@ export class OpenAccountComponent {
       "country": "Sri Lanka"
     };
 
-    payhere.startCheckout(payment);
+    (window as any).payhere.startCheckout(payment);
   }
 }
