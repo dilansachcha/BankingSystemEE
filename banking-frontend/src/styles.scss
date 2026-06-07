@@ -56,14 +56,13 @@ body {
 .error-snackbar .mat-mdc-button .mdc-button__label { color: #ef4444 !important; }
 
 //Override chrome autofill
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
+input.mat-mdc-input-element:-webkit-autofill,
+input.mat-mdc-input-element:-webkit-autofill:hover,
+input.mat-mdc-input-element:-webkit-autofill:focus,
+input.mat-mdc-input-element:-webkit-autofill:active {
   -webkit-text-fill-color: #ffffff !important;
-
-  -webkit-box-shadow: 0 0 0 30px #121214 inset !important;
-  box-shadow: inset 0 0 0 30px #121214 !important;
-
-  transition: background-color 5000s ease-in-out 0s;
+  -webkit-box-shadow: 0 0 0px 1000px #121316 inset !important;
+  background-color: transparent !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+  caret-color: white !important;
 }

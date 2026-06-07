@@ -13,6 +13,7 @@ import lk.fortyfourss.ejb.bankingsystemee.exception.AccountCreationException;
 import lk.fortyfourss.ejb.bankingsystemee.model.AccountType;
 import lk.fortyfourss.ejb.bankingsystemee.model.User;
 import lk.fortyfourss.ejb.bankingsystemee.service.AccountCreationServiceBean;
+import java.util.Locale;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -53,8 +54,7 @@ public class AccountCreationResource {
             String merchantSecret = System.getenv("PAYHERE_MERCHANT_SECRET");
             String currency = "LKR";
 
-            DecimalFormat df = new DecimalFormat("0.00");
-            String formattedAmount = df.format(request.initialDeposit);
+            String formattedAmount = String.format(Locale.US, "%.2f", request.initialDeposit);
 
             //MD5 Hash
             String hashedSecret = getMd5(merchantSecret).toUpperCase();
@@ -99,8 +99,8 @@ public class AccountCreationResource {
 
             String merchantId = System.getenv("PAYHERE_MERCHANT_ID");
             String merchantSecret = System.getenv("PAYHERE_MERCHANT_SECRET");
-            DecimalFormat df = new DecimalFormat("0.00");
-            String formattedAmount = df.format(acc.getInitialDeposit());
+
+            String formattedAmount = String.format(Locale.US, "%.2f", acc.getInitialDeposit());
 
             String hashedSecret = getMd5(merchantSecret).toUpperCase();
             String hashString = merchantId + accNo + formattedAmount + "LKR" + hashedSecret;
@@ -112,7 +112,10 @@ public class AccountCreationResource {
             );
             return Response.ok(jsonResponse).build();
         } catch (Exception e) {
-            return Response.status(500).entity("{\"error\":\"Cannot generate payment payload\"}").build();
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"Cannot generate payment payload: " + e.getMessage() + "\"}")
+                    .build();
         }
     }
 }
