@@ -88,4 +88,31 @@ public class AccountCreationResource {
             throw new RuntimeException("MD5 conversion failed", e);
         }
     }
+
+    @GET
+    @Path("/retry/{accNo}")
+    @Secured
+    public Response getRetryPayload(@PathParam("accNo") String accNo) {
+        try {
+            lk.fortyfourss.ejb.bankingsystemee.model.Account acc = em.createQuery("SELECT a FROM Account a WHERE a.accountNumber = :accNo", lk.fortyfourss.ejb.bankingsystemee.model.Account.class)
+                    .setParameter("accNo", accNo).getSingleResult();
+
+            String merchantId = System.getenv("PAYHERE_MERCHANT_ID");
+            String merchantSecret = System.getenv("PAYHERE_MERCHANT_SECRET");
+            DecimalFormat df = new DecimalFormat("0.00");
+            String formattedAmount = df.format(acc.getInitialDeposit());
+
+            String hashedSecret = getMd5(merchantSecret).toUpperCase();
+            String hashString = merchantId + accNo + formattedAmount + "LKR" + hashedSecret;
+            String md5Hash = getMd5(hashString).toUpperCase();
+
+            String jsonResponse = String.format(
+                    "{\"orderId\":\"%s\", \"hash\":\"%s\", \"merchantId\":\"%s\", \"amount\":\"%s\", \"accountType\":\"%s\"}",
+                    accNo, md5Hash, merchantId, formattedAmount, acc.getAccountType()
+            );
+            return Response.ok(jsonResponse).build();
+        } catch (Exception e) {
+            return Response.status(500).entity("{\"error\":\"Cannot generate payment payload\"}").build();
+        }
+    }
 }

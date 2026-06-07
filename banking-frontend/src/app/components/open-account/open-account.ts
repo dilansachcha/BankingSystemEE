@@ -81,7 +81,7 @@ export class OpenAccountComponent {
       this.errorMessage = "Payment Error: " + error;
     };
 
-    const depositAmount = this.initialDeposit ? this.initialDeposit : 0;
+    const formattedAmount = (this.initialDeposit ? this.initialDeposit : 0).toFixed(2);
 
     const payment = {
       "sandbox": true,
@@ -91,7 +91,7 @@ export class OpenAccountComponent {
       "notify_url": "http://159.65.148.173:8080/BankingSystemEE-1.0-SNAPSHOT/api/payhere/notify",
       "order_id": data.orderId,
       "items": "Initial Deposit - " + this.accountType,
-      "amount": depositAmount,
+      "amount": formattedAmount,
       "currency": "LKR",
       "hash": data.hash,
       "first_name": "Valued",

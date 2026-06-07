@@ -103,6 +103,50 @@ export class Dashboard implements OnInit {
     });
   }
 
+  fundPendingAccount(acc: Account) {
+    this.accountService.getRetryPayload(acc.accountNumber).subscribe({
+      next: (data) => this.triggerPayHere(data),
+      error: (err) => this.showNotification("Failed to contact payment gateway.", true)
+    });
+  }
+
+  triggerPayHere(data: any) {
+    (window as any).payhere.onCompleted = (orderId: string) => {
+      this.showNotification("Payment successful! Your account is now ACTIVE.");
+      this.fetchAccounts(); // Refresh the dashboard!
+    };
+
+    (window as any).payhere.onDismissed = () => {
+      this.showNotification("Payment dismissed.", true);
+    };
+
+    (window as any).payhere.onError = (error: string) => {
+      this.showNotification("Payment Error: " + error, true);
+    };
+
+    const payment = {
+      "sandbox": true,
+      "merchant_id": data.merchantId,
+      "return_url": window.location.origin + "/dashboard",
+      "cancel_url": window.location.origin + "/dashboard",
+      "notify_url": "http://159.65.148.173:8080/BankingSystemEE-1.0-SNAPSHOT/api/payhere/notify",
+      "order_id": data.orderId,
+      "items": "Account Funding - " + data.accountType,
+      "amount": data.amount,
+      "currency": "LKR",
+      "hash": data.hash,
+      "first_name": "Valued",
+      "last_name": "Customer",
+      "email": "dilansachintha44@gmail.com",
+      "phone": "0771855521",
+      "address": "No.1, 1st Cross Street, Pettah",
+      "city": "Colombo",
+      "country": "Sri Lanka"
+    };
+
+    (window as any).payhere.startPayment(payment);
+  }
+
   showNotification(message: string, isError: boolean = false) {
     this.snackBar.open(message, 'Close', {
       duration: 3000,

@@ -36,4 +36,8 @@ export class AccountService {
   createAccount(payload: { accountType: string, initialDeposit: number, maturityMonths?: number }): Observable<any> {
     return this.http.post(`${this.apiUrl}/account-create`, payload);
   }
+
+  getRetryPayload(accNo: string) {
+    return this.http.get<any>(`${environment.apiUrl}/account-create/retry/${accNo}`);
+  }
 }

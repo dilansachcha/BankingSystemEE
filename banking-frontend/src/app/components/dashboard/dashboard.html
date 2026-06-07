@@ -88,7 +88,11 @@
           </mat-card-content>
 
           <mat-card-actions>
-            <div class="disabled-action-text">Account actions restricted.</div>
+            <div *ngIf="acc.status !== 'PENDING'" class="disabled-action-text">Account actions restricted.</div>
+
+            <button *ngIf="acc.status === 'PENDING'" mat-flat-button color="primary" class="withdraw-btn" (click)="fundPendingAccount(acc)">
+              Fund Account Now
+            </button>
           </mat-card-actions>
         </mat-card>
       </div>

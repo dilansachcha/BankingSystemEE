@@ -35,8 +35,8 @@ public class AccountService {
         List<Account> accounts = em.createQuery("SELECT a FROM Account a", Account.class).getResultList();
 
         for (Account acc : accounts) {
-            if ("BLOCKED".equalsIgnoreCase(acc.getStatus())) {
-                LOGGER.info("[Interest Skipped] BLOCKED account: " + acc.getAccountNumber());
+            if ("BLOCKED".equalsIgnoreCase(acc.getStatus()) || "PENDING".equalsIgnoreCase(acc.getStatus())) {
+                LOGGER.info("[Interest Skipped] Inactive account: " + acc.getAccountNumber());
                 continue;
             }
 
