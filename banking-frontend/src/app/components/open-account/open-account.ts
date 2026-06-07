@@ -103,6 +103,6 @@ export class OpenAccountComponent {
       "country": "Sri Lanka"
     };
 
-    (window as any).payhere.startCheckout(payment);
+    (window as any).payhere.startPayment(payment);
   }
 }

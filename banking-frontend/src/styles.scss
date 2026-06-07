@@ -54,3 +54,16 @@ body {
 //Close btn
 .success-snackbar .mat-mdc-button .mdc-button__label { color: #10b981 !important; }
 .error-snackbar .mat-mdc-button .mdc-button__label { color: #ef4444 !important; }
+
+//Override chrome autofill
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+
+  -webkit-box-shadow: 0 0 0 30px #121214 inset !important;
+  box-shadow: inset 0 0 0 30px #121214 !important;
+
+  transition: background-color 5000s ease-in-out 0s;
+}
