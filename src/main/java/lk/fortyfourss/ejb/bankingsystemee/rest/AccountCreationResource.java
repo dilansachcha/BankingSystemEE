@@ -75,8 +75,16 @@ public class AccountCreationResource {
 
     private Response generateStripeSession(String accNo, double amount, String accountType) {
         try {
-            Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY").trim();
-            String domainUrl = "https://fortressbank.dedyn.io"; // Your secure domain
+            String apiKey = System.getenv("STRIPE_SECRET_KEY");
+
+            if (apiKey == null || apiKey.trim().isEmpty()) {
+                System.out.println("CRITICAL ERROR: STRIPE_SECRET_KEY is null in the environment!");
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity("{\"error\":\"Server missing Stripe configuration.\"}").build();
+            }
+
+            Stripe.apiKey = apiKey.trim();
+            String domainUrl = "https://fortressbank.dedyn.io";
 
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -88,7 +96,7 @@ public class AccountCreationResource {
                                     .setPriceData(
                                             SessionCreateParams.LineItem.PriceData.builder()
                                                     .setCurrency("lkr")
-                                                    .setUnitAmount((long) (amount * 100)) // Stripe expects amounts in cents
+                                                    .setUnitAmount((long) (amount * 100)) // Stripe needs cents
                                                     .setProductData(
                                                             SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                                     .setName("Account Funding - " + accountType)
@@ -98,12 +106,17 @@ public class AccountCreationResource {
                     .build();
 
             Session session = Session.create(params);
-
-            //Stripe URL -> Angular
             return Response.ok("{\"checkoutUrl\":\"" + session.getUrl() + "\"}").build();
-        } catch (Exception e) {
+
+        } catch (com.stripe.exception.StripeException se) {
+            System.out.println("STRIPE API REJECTED REQUEST: " + se.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\":\"Stripe session creation failed.\"}").build();
+                    .entity("{\"error\":\"Stripe Error: " + se.getMessage() + "\"}").build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"Internal Server Error: " + e.getMessage() + "\"}").build();
         }
     }
 }
