@@ -9,6 +9,8 @@ import { AccountService, Account } from '../../services/account';
 import { Router, RouterModule } from '@angular/router';
 import { FixedActionDialogComponent } from '../fixed-action-dialog/fixed-action-dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,8 +39,25 @@ export class Dashboard implements OnInit {
   private accountService = inject(AccountService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
+  private route = inject(ActivatedRoute);
+  private http = inject(HttpClient);
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['payment_success'] && params['accNo']) {
+        this.http.post(`https://fortressbank.dedyn.io/BankingSystemEE-1.0-SNAPSHOT/api/payment/activate/${params['accNo']}`, {}).subscribe({
+          next: () => {
+            this.showNotification("Payment successful! Account is now ACTIVE.");
+            this.router.navigate(['/dashboard'], { replaceUrl: true }); // Clean URL
+            this.fetchAccounts();
+          }
+        });
+      } else if (params['payment_canceled']) {
+        this.showNotification("Payment was canceled.", true);
+        this.router.navigate(['/dashboard'], { replaceUrl: true });
+      }
+    });
+
     this.fetchAccounts();
   }
 
@@ -105,46 +124,15 @@ export class Dashboard implements OnInit {
 
   fundPendingAccount(acc: Account) {
     this.accountService.getRetryPayload(acc.accountNumber).subscribe({
-      next: (data) => this.triggerPayHere(data),
+      next: (data) => this.triggerStripe(data),
       error: (err) => this.showNotification("Failed to contact payment gateway.", true)
     });
   }
 
-  triggerPayHere(data: any) {
-    (window as any).payhere.onCompleted = (orderId: string) => {
-      this.showNotification("Payment successful! Your account is now ACTIVE.");
-      this.fetchAccounts(); // Refresh the dashboard!
-    };
-
-    (window as any).payhere.onDismissed = () => {
-      this.showNotification("Payment dismissed.", true);
-    };
-
-    (window as any).payhere.onError = (error: string) => {
-      this.showNotification("Payment Error: " + error, true);
-    };
-
-    const payment = {
-      "sandbox": true,
-      "merchant_id": data.merchantId,
-      "return_url": window.location.origin + "/dashboard",
-      "cancel_url": window.location.origin + "/dashboard",
-      "notify_url": "https://fortressbank.dedyn.io/BankingSystemEE-1.0-SNAPSHOT/api/payhere/notify",
-      "order_id": data.orderId,
-      "items": "Account Funding - " + data.accountType,
-      "amount": data.amount,
-      "currency": "LKR",
-      "hash": data.hash,
-      "first_name": "Valued",
-      "last_name": "Customer",
-      "email": "dilansachintha44@gmail.com",
-      "phone": "0771855521",
-      "address": "No.1, 1st Cross Street, Pettah",
-      "city": "Colombo",
-      "country": "Sri Lanka"
-    };
-
-    (window as any).payhere.startPayment(payment);
+  triggerStripe(data: any) {
+    if (data.checkoutUrl) {
+      window.location.href = data.checkoutUrl;
+    }
   }
 
   showNotification(message: string, isError: boolean = false) {

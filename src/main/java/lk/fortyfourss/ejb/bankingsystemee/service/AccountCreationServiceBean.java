@@ -28,11 +28,22 @@ public class AccountCreationServiceBean {
 
     @Audit
     public String createAccount(User user, AccountType accountType, double initialDeposit, Integer maturityMonths) {
-        long count = em.createQuery("SELECT COUNT(a) FROM Account a WHERE a.user = :user", Long.class)
+
+        long activeCount = em.createQuery("SELECT COUNT(a) FROM Account a WHERE a.user = :user AND a.status != 'PENDING'", Long.class)
                 .setParameter("user", user)
                 .getSingleResult();
-        if (count >= 8) {
-            throw new AccountCreationException("One user can only have up to 8 accounts.");
+
+        if (activeCount >= 5) {
+            throw new AccountCreationException("One user can only have up to 5 active accounts.");
+        }
+
+        long pendingCount = em.createQuery("SELECT COUNT(a) FROM Account a WHERE a.user = :user AND a.accountType = :accType AND a.status = 'PENDING'", Long.class)
+                .setParameter("user", user)
+                .setParameter("accType", accountType.name())
+                .getSingleResult();
+
+        if (pendingCount > 0) {
+            throw new AccountCreationException("You already have a pending " + accountType + " account. Please fund it before opening another.");
         }
 
         double minDeposit = switch (accountType) {
@@ -56,7 +67,6 @@ public class AccountCreationServiceBean {
         account.setInitialDeposit(initialDeposit);
         account.setCreatedAt(LocalDateTime.now());
         account.setLastUpdated(LocalDateTime.now());
-
         account.setStatus("PENDING");
 
         if (accountType == AccountType.FIXED && maturityMonths != null) {

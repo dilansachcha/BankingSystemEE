@@ -56,7 +56,7 @@ export class OpenAccountComponent {
 
     this.accountService.createAccount(payload).subscribe({
       next: (response: any) => {
-        this.triggerPayHere(response);
+        this.triggerStripe(response);
         this.isLoading = false;
       },
       error: (err) => {
@@ -66,43 +66,11 @@ export class OpenAccountComponent {
     });
   }
 
-  triggerPayHere(data: any) {
-    (window as any).payhere.onCompleted = (orderId: string) => {
-      alert("Payment successful! Your account is now ACTIVE.");
-      this.router.navigate(['/dashboard']);
-    };
-
-    (window as any).payhere.onDismissed = () => {
-      alert("Payment dismissed. Your account remains PENDING until funded.");
-      this.router.navigate(['/dashboard']);
-    };
-
-    (window as any).payhere.onError = (error: string) => {
-      this.errorMessage = "Payment Error: " + error;
-    };
-
-    const formattedAmount = (this.initialDeposit ? this.initialDeposit : 0).toFixed(2);
-
-    const payment = {
-      "sandbox": true,
-      "merchant_id": data.merchantId,
-      "return_url": window.location.origin + "/dashboard",
-      "cancel_url": window.location.origin + "/dashboard",
-      "notify_url": "https://fortressbank.dedyn.io/BankingSystemEE-1.0-SNAPSHOT/api/payhere/notify",
-      "order_id": data.orderId,
-      "items": "Initial Deposit - " + this.accountType,
-      "amount": formattedAmount,
-      "currency": "LKR",
-      "hash": data.hash,
-      "first_name": "Valued",
-      "last_name": "Customer",
-      "email": "dilansachintha44@gmail.com",
-      "phone": "0771855521",
-      "address": "No.1, 1st Cross Street, Pettah",
-      "city": "Colombo",
-      "country": "Sri Lanka"
-    };
-
-    (window as any).payhere.startPayment(payment);
+  triggerStripe(data: any) {
+    if (data.checkoutUrl) {
+      window.location.href = data.checkoutUrl;
+    } else {
+      this.errorMessage = "Failed to launch payment gateway.";
+    }
   }
 }
