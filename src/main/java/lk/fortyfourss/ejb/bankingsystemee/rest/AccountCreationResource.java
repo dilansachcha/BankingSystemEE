@@ -17,6 +17,13 @@ import lk.fortyfourss.ejb.bankingsystemee.service.AccountCreationServiceBean;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+// --- NEW IMPORTS FOR SSL BYPASS ---
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
+
 @Path("/account-create")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -32,6 +39,23 @@ public class AccountCreationResource {
         public String accountType;
         public double initialDeposit;
         public Integer maturityMonths;
+    }
+
+    private void disableSslVerification() {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() { return null; }
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) { }
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) { }
+                    }
+            };
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @POST
@@ -75,10 +99,10 @@ public class AccountCreationResource {
 
     private Response generateStripeSession(String accNo, double amount, String accountType) {
         try {
-            String apiKey = System.getenv("STRIPE_SECRET_KEY");
+            disableSslVerification();
 
+            String apiKey = System.getenv("STRIPE_SECRET_KEY");
             if (apiKey == null || apiKey.trim().isEmpty()) {
-                System.out.println("CRITICAL ERROR: STRIPE_SECRET_KEY is null in the environment!");
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .entity("{\"error\":\"Server missing Stripe configuration.\"}").build();
             }
@@ -96,7 +120,7 @@ public class AccountCreationResource {
                                     .setPriceData(
                                             SessionCreateParams.LineItem.PriceData.builder()
                                                     .setCurrency("lkr")
-                                                    .setUnitAmount((long) (amount * 100)) // Stripe needs cents
+                                                    .setUnitAmount((long) (amount * 100))
                                                     .setProductData(
                                                             SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                                     .setName("Account Funding - " + accountType)
@@ -109,10 +133,9 @@ public class AccountCreationResource {
             return Response.ok("{\"checkoutUrl\":\"" + session.getUrl() + "\"}").build();
 
         } catch (com.stripe.exception.StripeException se) {
-            System.out.println("STRIPE API REJECTED REQUEST: " + se.getMessage());
+            System.out.println("STRIPE ERROR: " + se.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\":\"Stripe Error: " + se.getMessage() + "\"}").build();
-
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
