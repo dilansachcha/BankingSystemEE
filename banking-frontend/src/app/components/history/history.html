@@ -2,7 +2,13 @@
   <mat-card class="history-card">
     <mat-card-header>
       <mat-card-title>Transaction History</mat-card-title>
-      <button mat-button routerLink="/dashboard" class="back-btn">Back to Dashboard</button>
+
+      <div class="header-actions">
+        <button mat-raised-button color="primary" class="download-btn" (click)="downloadPDF()" [disabled]="transactions.length === 0 || isLoading">
+          <mat-icon>picture_as_pdf</mat-icon> Download PDF
+        </button>
+        <button mat-button routerLink="/dashboard" class="back-btn">Back to Dashboard</button>
+      </div>
     </mat-card-header>
 
     <div *ngIf="isLoading" class="spinner-container">

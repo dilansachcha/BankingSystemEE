@@ -20,7 +20,7 @@
 
   <mat-dialog-actions align="end" class="actions">
     <button mat-button class="cancel-btn" (click)="onCancel()">Cancel</button>
-    <button mat-flat-button color="accent" class="confirm-btn" [disabled]="!selectedTargetId" (click)="onConfirm()">
+    <button mat-raised-button class="danger-button" [disabled]="!selectedTargetId" (click)="onConfirm()">
       Confirm
     </button>
   </mat-dialog-actions>

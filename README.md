@@ -1,6 +1,6 @@
 # 🏦 Fortress BankingSystemEE (Enterprise Full-Stack Portal)
 
-An **end-to-end secure, cloud-deployed banking system** coupling a highly responsive **Angular 17 Single Page Application (SPA)** with a robust **Jakarta EE 10 micro-monolith backend**. Designed to handle **high-concurrency transactions**, **scheduled recurring transfers**, **PayHere payment gateway integration**, **real-time WebSocket notifications**, strict **Role-Based Access Control (RBAC)** via **JWT**, and **Generative AI fraud detection** powered by Google Gemini and xAI.
+An **end-to-end secure, cloud-deployed banking system** coupling a highly responsive **Angular 17 Single Page Application (SPA)** with a robust **Jakarta EE 10 micro-monolith backend**. Designed to handle **high-concurrency transactions**, **scheduled recurring transfers**, **Stripe payment gateway integration**, **real-time WebSocket notifications**, strict **Role-Based Access Control (RBAC)** via **JWT**, and **Generative AI fraud detection** powered by Google Gemini and xAI.
 
 ---
 
@@ -29,7 +29,7 @@ To evaluate the Admin Console without waiting for SMTP email OTPs, an optimized 
 1. From the Admin Console, review the live analytics and locate your newly registered Customer account sitting in the **Pending Approvals** directory.
 2. Click **Approve User** to flip their database status to `ACTIVE`.
 3. Log out of the Admin account, and log back in using the Customer credentials you created in Step 1.
-4. You now have full access to test the Customer Dashboard, manual/scheduled fund transfers, the PayHere checkout modal, and dynamic PDF receipt generation!
+4. You now have full access to test the Customer Dashboard, manual/scheduled fund transfers, the Stripe checkout modal, and dynamic PDF receipt generation!
 
 ---
 
@@ -41,7 +41,7 @@ To evaluate the Admin Console without waiting for SMTP email OTPs, an optimized 
 
 ✅ **AI-Powered Admin Insights:** Real-time transaction risk profiling and anomaly detection using Google Gemini and xAI LLMs.
 
-✅ **Two-Step Payment Verification:** PayHere MD5-hashed checkout flows with asynchronous Webhook validation to transition funded accounts from `PENDING` to `ACTIVE`.
+✅ **Automated Payment Verification:** Stripe Checkout Session integration via the Java SDK with synchronous redirect validation to instantly transition funded accounts from `PENDING` to `ACTIVE`.
 
 ✅ **Manual & Scheduled Transfers:** Real-time processing, daily/weekly cycles, and automated 3-retry fallback logic for failed transfers.
 
@@ -61,18 +61,18 @@ To evaluate the Admin Console without waiting for SMTP email OTPs, an optimized 
 
 ## 🖥️ Application Interfaces & User Flows
 
-| Feature / Interface | Interface Preview | Workflow & Business Logic |
+| Feature / Interface |                                                       Interface Preview                                                        | Workflow & Business Logic |
 | :--- |:------------------------------------------------------------------------------------------------------------------------------:| :--- |
-| **Authentication: Registration** | <img src="docs/images/auth-register.png" width="400"> | **Flow:** Users submit KYC details. The backend mathematically salts and hashes passwords via BCrypt before database insertion. Accounts are flagged as `INACTIVE`/`PENDING` and require manual Admin approval before login is permitted. |
-| **Authentication: JWT Login** | <img src="docs/images/auth-login.png" width="400"> | **Flow:** Legacy sessions are replaced by stateless JSON Web Tokens. A custom `@PreMatching` CorsFilter and `JwtAuthFilter` intercept the credentials, validate the signature, and extract user claims (`@RolesAllowed("CUSTOMER")`) into the JAX-RS request context. |
-| **Customer Dashboard** | <img src="docs/images/customer-dashboard.png" width="400"> | **Flow:** The central hub utilizing Angular RxJS observables to fetch real-time aggregated balances. Displays active Checking, Savings, and Fixed Deposit accounts with visual status indicators and quick-action routing. |
-| **Account Creation & PayHere Gateway** | <img src="docs/images/new-account.png" width="400"><br><br><img src="docs/images/payhere-gateway.png" width="400"> | **Flow:** When opening an account requiring an initial deposit (e.g., Rs. 1000 for Savings), the backend creates a `PENDING` account, generates an MD5 cryptographic hash, and launches the PayHere modal. An asynchronous webhook securely verifies the gateway signature and flips the account to `ACTIVE` upon payment confirmation. |
-| **Manual Fund Transfers** | <img src="docs/images/manual-transfer.png" width="400"> | **Flow:** Immediate inter-account transfers governed by strict Container-Managed Transactions (CMT). Enforces minimum balance requirements and prevents overdrafts during concurrent database write requests via row-level locking. If a database failure occurs mid-transfer, the entire transaction rolls back via JTA. |
+| **Authentication: Registration** |                                     <img src="docs/images/auth-register.png" width="400">                                      | **Flow:** Users submit KYC details. The backend mathematically salts and hashes passwords via BCrypt before database insertion. Accounts are flagged as `INACTIVE`/`PENDING` and require manual Admin approval before login is permitted. |
+| **Authentication: JWT Login** |                                       <img src="docs/images/auth-login.png" width="400">                                       | **Flow:** Legacy sessions are replaced by stateless JSON Web Tokens. A custom `@PreMatching` CorsFilter and `JwtAuthFilter` intercept the credentials, validate the signature, and extract user claims (`@RolesAllowed("CUSTOMER")`) into the JAX-RS request context. |
+| **Customer Dashboard** |                                   <img src="docs/images/customer-dashboard.png" width="400">                                   | **Flow:** The central hub utilizing Angular RxJS observables to fetch real-time aggregated balances. Displays active Checking, Savings, and Fixed Deposit accounts with visual status indicators and quick-action routing. |
+| **Account Creation & Stripe Gateway** |       <img src="docs/images/new-account.png" width="400"><br><br><img src="docs/images/stripe-gateway.png" width="400">        | **Flow:** When opening an account requiring an initial deposit, the backend creates a `PENDING` account and uses the Stripe Java SDK to securely generate a Checkout Session. The user is redirected to a Stripe-hosted payment page. Upon successful payment, a synchronous redirect endpoint validates the transaction and flips the account to `ACTIVE`. |
+| **Manual Fund Transfers** |                                    <img src="docs/images/manual-transfer.png" width="400">                                     | **Flow:** Immediate inter-account transfers governed by strict Container-Managed Transactions (CMT). Enforces minimum balance requirements and prevents overdrafts during concurrent database write requests via row-level locking. If a database failure occurs mid-transfer, the entire transaction rolls back via JTA. |
 | **Scheduled & Recurring Transfers** | <img src="docs/images/schedule-a-transfer.png" width="400"><br><br><img src="docs/images/scheduled-transfers.png" width="400"> | **Flow:** Users configure one-time or recurring (daily, weekly, monthly) transfers. An EJB `@Schedule` polling bean executes these asynchronously at midnight, utilizing a cron-based 3-attempt retry logic for failed executions due to insufficient funds. |
-| **Transaction Ledger** | <img src="docs/images/transaction-history.png" width="400"> | **Flow:** Paginated and sortable ledger of all credits and debits. Automatically tracks execution times via custom `@Performance` Java Interceptors to identify backend bottlenecks. |
-| **PDF Receipt Export** | <img src="docs/images/pdf-receipt.png" width="400"> | **Flow:** Users can filter the ledger by date/account and instantly generate standard-compliant PDF transaction receipts dynamically on the client-side. |
-| **Admin Dashboard & Live Alerts** | <img src="docs/images/admin-dashboard.png" width="400"> | **Flow:** The control center. Uses a persistent WebSocket connection to push live, unrefreshed alerts directly to the Admin UI whenever a transfer exceeds Rs. 50,000 or a new user attempts registration. |
-| **Admin AI Fraud Detection** | <img src="docs/images/ai-fraud.png" width="400"> | **Flow:** Admins trigger an AI audit on specific users. The backend aggregates the user's historical transaction data and prompts Google Gemini / xAI, generating a JSON-formatted risk score (0-100) and a plain-text analysis of spending anomalies. |
+| **Transaction Ledger** |                                  <img src="docs/images/transaction-history.png" width="400">                                   | **Flow:** Paginated and sortable ledger of all credits and debits. Automatically tracks execution times via custom `@Performance` Java Interceptors to identify backend bottlenecks. |
+| **PDF Receipt Export** |                                      <img src="docs/images/pdf-receipt.png" width="400">                                       | **Flow:** Users can filter the ledger by date/account and instantly generate standard-compliant PDF transaction receipts dynamically on the client-side. |
+| **Admin Dashboard & Live Alerts** |                                    <img src="docs/images/admin-dashboard.png" width="400">                                     | **Flow:** The control center. Uses a persistent WebSocket connection to push live, unrefreshed alerts directly to the Admin UI whenever a transfer exceeds Rs. 50,000 or a new user attempts registration. |
+| **Admin AI Fraud Detection** |                                        <img src="docs/images/ai-fraud.png" width="400">                                        | **Flow:** Admins trigger an AI audit on specific users. The backend aggregates the user's historical transaction data and prompts Google Gemini / xAI, generating a JSON-formatted risk score (0-100) and a plain-text analysis of spending anomalies. |
 
 ---
 
@@ -83,7 +83,7 @@ To evaluate the Admin Console without waiting for SMTP email OTPs, an optimized 
 | **Frontend** | Angular 17, TypeScript, SCSS, RxJS, Chart.js, Angular Material |
 | **Backend API** | Jakarta EE 10, JAX-RS (REST), EJB (Stateless, Singleton), Servlets |
 | **Security** | JWT (jjwt), BCrypt, Custom Auth Filters (`@RolesAllowed`) |
-| **Payments** | PayHere Gateway (Checkout API & Asynchronous Webhooks) |
+| **Payments** | Stripe Gateway (Checkout Sessions API & Java SDK) |
 | **AI Integration** | Google Gemini LLM API, xAI API (Fraud Anomaly Detection) |
 | **Database & ORM** | MySQL 8.0, JPA (Hibernate), Transactions (JTA, BMT, CMT) |
 | **Real-time/Async** | WebSockets, EJB Timer Service (`@Schedule`), JavaMail API |
@@ -106,8 +106,8 @@ To evaluate the Admin Console without waiting for SMTP email OTPs, an optimized 
 2. **Password Protection:** Passwords securely hashed and salted using BCrypt before database insertion.
 3. **Auth Interception:** A custom `@PreMatching` `CorsFilter` and `JwtAuthFilter` intercept all `/api/*` REST requests, validate the Bearer token signature, and extract user claims into the JAX-RS request context.
 4. **Endpoint Authorization:** Programmatic security using `@RolesAllowed("ADMIN")` and `@RolesAllowed("CUSTOMER")` is utilized extensively across REST resources and EJBs to prevent unauthorized execution.
-5. **Gateway Verification:** MD5 Signature verification is strictly enforced on the PayHere webhook endpoint to prevent spoofed payment confirmations.
-6. **Environment Isolation:** Sensitive API keys (Gemini, PayHere, Mail Credentials, DB passwords) are entirely abstracted from the codebase using `.env` files and Docker runtime environment variables.
+5. **Gateway Verification:** Secure, server-side Stripe Checkout Session generation ensures payment amounts cannot be tampered with on the client side, bypassing the need for vulnerable client-side pricing scripts.
+6. **Environment Isolation:** Sensitive API keys (Gemini, Stripe, Mail Credentials, DB passwords) are entirely abstracted from the codebase using `.env` files and Docker runtime environment variables.
 
 ---
 
@@ -172,7 +172,7 @@ This application is fully containerized and designed for rapid cloud deployment 
 ### The Architecture:
 
 1. **Database Container:** `mysql:8.0` instance with internal Docker DNS networking (`db:3306`), secured with persistent volumes.
-2. **Backend Container:** GlassFish 7 server running the compiled `.war`, injected dynamically with Gemini and PayHere API keys via `.env`.
+2. **Backend Container:** GlassFish 7 server running the compiled `.war`, injected dynamically with Gemini and Stripe API keys via `.env`. A custom Docker build step updates Linux CA certificates to ensure trusted SSL handshakes with modern APIs.
 3. **Frontend Container:** Angular SPA built for production, served via an **Nginx HTTPS Proxy** that encapsulates SSL execution using Let's Encrypt certificates and passes traffic directly to the GlassFish backend layer.
 
 ### Deployment Instructions (DigitalOcean Ubuntu Droplet):
@@ -197,7 +197,7 @@ docker run -it --rm --name certbot -p 80:80 -v "/root/BankingSystemEE/certbot/co
 
 ```bash
 nano .env
-# Add variables: GEMINI_API_KEY=..., XAI_API_KEY=..., PAYHERE_MERCHANT_ID=..., PAYHERE_MERCHANT_SECRET=...
+# Add variables: GEMINI_API_KEY=..., XAI_API_KEY=..., STRIPE_SECRET_KEY=...
 
 ```
 
@@ -221,7 +221,7 @@ BankingSystemEE/
 ├── banking-frontend/    # Angular 17 SPA (UI, Interceptors, Guards, SCSS, RxJS, Nginx Proxy)
 ├── src/main/java/       # Jakarta EE 10 Backend Source
 │   ├── model/           # JPA Entity Classes (User, Account, Transaction)
-│   ├── rest/            # JAX-RS Endpoints (AuthResource, PayhereWebhook, FraudDetection)
+│   ├── rest/            # JAX-RS Endpoints (AuthResource, PaymentActivationResource, FraudDetection)
 │   ├── service/         # Stateless EJB Business Logic (JTA Transactions, GenAI Clients)
 │   ├── singleton/       # Timer Polling & Scheduled Tasks (@Schedule)
 │   ├── interceptor/     # Logging, Performance, Audit Interceptors
