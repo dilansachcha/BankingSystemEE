@@ -6,20 +6,20 @@ An **end-to-end secure, cloud-deployed banking system** coupling a highly respon
 
 ## 🚀 Live Demo & Evaluation Guide
 
-The application is currently live, containerized, and deployed on a DigitalOcean Droplet.
+The application is currently live, containerized, and deployed with end-to-end encryption.
 
-🔗 **[Access the Live Portal Here: http://159.65.148.173/](http://159.65.148.173/)**
+🔗 **[Access the Live Portal Here: https://fortressbank.dedyn.io/](https://fortressbank.dedyn.io/)**
 
 To fully experience the system's database persistence, Role-Based Access Control (RBAC), and security filters, we recommend following this end-to-end evaluation flow:
 
 ### 1. The Standard Customer Flow (Registration)
-1. Navigate to the **[Sign Up](http://159.65.148.173/register)** page and register using your genuine email address (or a test email).
+1. Navigate to the **[Sign Up](https://fortressbank.dedyn.io/register)** page and register using your genuine email address (or a test email).
 2. *Behind the scenes:* The Java backend securely hashes your password via BCrypt and writes your profile to the MySQL database as a `CUSTOMER` with an `INACTIVE` status.
 3. If you attempt to log in immediately, the backend `AuthResource` catches your status and correctly restricts access, showing: *"Your account is pending Admin approval."*
 
 ### 2. The Recruiter Admin Bypass ("God Mode")
 To evaluate the Admin Console without waiting for SMTP email OTPs, an optimized demo bypass has been integrated directly into the UI.
-1. Go to the **[Login Page](http://159.65.148.173/login)** and click the **"Load Recruiter Demo Admin"** button below the main form.
+1. Go to the **[Login Page](https://fortressbank.dedyn.io/login)** and click the **"Load Recruiter Demo Admin"** button below the main form.
 2. The UI will auto-fill the Master Admin credentials (`admin@fortress.com`). Click **Login**.
 3. *Behind the scenes:* The backend recognizes this demo address and intelligently skips the slow JavaMail SMTP thread orchestration.
 4. The Angular form will advance and auto-inject the backend backdoor OTP code (`000000`). Click **Verify**.
@@ -61,18 +61,18 @@ To evaluate the Admin Console without waiting for SMTP email OTPs, an optimized 
 
 ## 🖥️ Application Interfaces & User Flows
 
-| Feature / Interface |                                                       Interface Preview                                                        | Workflow & Business Logic |
+| Feature / Interface | Interface Preview | Workflow & Business Logic |
 | :--- |:------------------------------------------------------------------------------------------------------------------------------:| :--- |
-| **Authentication: Registration** |                                     <img src="docs/images/auth-register.png" width="400">                                      | **Flow:** Users submit KYC details. The backend mathematically salts and hashes passwords via BCrypt before database insertion. Accounts are flagged as `INACTIVE`/`PENDING` and require manual Admin approval before login is permitted. |
-| **Authentication: JWT Login** |                                       <img src="docs/images/auth-login.png" width="400">                                       | **Flow:** Legacy sessions are replaced by stateless JSON Web Tokens. A custom `@PreMatching` CorsFilter and `JwtAuthFilter` intercept the credentials, validate the signature, and extract user claims (`@RolesAllowed("CUSTOMER")`) into the JAX-RS request context. |
-| **Customer Dashboard** |                                   <img src="docs/images/customer-dashboard.png" width="400">                                   | **Flow:** The central hub utilizing Angular RxJS observables to fetch real-time aggregated balances. Displays active Checking, Savings, and Fixed Deposit accounts with visual status indicators and quick-action routing. |
-| **Account Creation & PayHere Gateway** |       <img src="docs/images/new-account.png" width="400"><br><br><img src="docs/images/payhere-gateway.png" width="400">       | **Flow:** When opening an account requiring an initial deposit (e.g., Rs. 1000 for Savings), the backend creates a `PENDING` account, generates an MD5 cryptographic hash, and launches the PayHere modal. An asynchronous webhook securely verifies the gateway signature and flips the account to `ACTIVE` upon payment confirmation. |
-| **Manual Fund Transfers** |                                    <img src="docs/images/manual-transfer.png" width="400">                                     | **Flow:** Immediate inter-account transfers governed by strict Container-Managed Transactions (CMT). Enforces minimum balance requirements and prevents overdrafts during concurrent database write requests via row-level locking. If a database failure occurs mid-transfer, the entire transaction rolls back via JTA. |
+| **Authentication: Registration** | <img src="docs/images/auth-register.png" width="400"> | **Flow:** Users submit KYC details. The backend mathematically salts and hashes passwords via BCrypt before database insertion. Accounts are flagged as `INACTIVE`/`PENDING` and require manual Admin approval before login is permitted. |
+| **Authentication: JWT Login** | <img src="docs/images/auth-login.png" width="400"> | **Flow:** Legacy sessions are replaced by stateless JSON Web Tokens. A custom `@PreMatching` CorsFilter and `JwtAuthFilter` intercept the credentials, validate the signature, and extract user claims (`@RolesAllowed("CUSTOMER")`) into the JAX-RS request context. |
+| **Customer Dashboard** | <img src="docs/images/customer-dashboard.png" width="400"> | **Flow:** The central hub utilizing Angular RxJS observables to fetch real-time aggregated balances. Displays active Checking, Savings, and Fixed Deposit accounts with visual status indicators and quick-action routing. |
+| **Account Creation & PayHere Gateway** | <img src="docs/images/new-account.png" width="400"><br><br><img src="docs/images/payhere-gateway.png" width="400"> | **Flow:** When opening an account requiring an initial deposit (e.g., Rs. 1000 for Savings), the backend creates a `PENDING` account, generates an MD5 cryptographic hash, and launches the PayHere modal. An asynchronous webhook securely verifies the gateway signature and flips the account to `ACTIVE` upon payment confirmation. |
+| **Manual Fund Transfers** | <img src="docs/images/manual-transfer.png" width="400"> | **Flow:** Immediate inter-account transfers governed by strict Container-Managed Transactions (CMT). Enforces minimum balance requirements and prevents overdrafts during concurrent database write requests via row-level locking. If a database failure occurs mid-transfer, the entire transaction rolls back via JTA. |
 | **Scheduled & Recurring Transfers** | <img src="docs/images/schedule-a-transfer.png" width="400"><br><br><img src="docs/images/scheduled-transfers.png" width="400"> | **Flow:** Users configure one-time or recurring (daily, weekly, monthly) transfers. An EJB `@Schedule` polling bean executes these asynchronously at midnight, utilizing a cron-based 3-attempt retry logic for failed executions due to insufficient funds. |
-| **Transaction Ledger** |                                  <img src="docs/images/transaction-history.png" width="400">                                   | **Flow:** Paginated and sortable ledger of all credits and debits. Automatically tracks execution times via custom `@Performance` Java Interceptors to identify backend bottlenecks. |
-| **PDF Receipt Export** |                                      <img src="docs/images/pdf-receipt.png" width="400">                                       | **Flow:** Users can filter the ledger by date/account and instantly generate standard-compliant PDF transaction receipts dynamically on the client-side. |
-| **Admin Dashboard & Live Alerts** |                                    <img src="docs/images/admin-dashboard.png" width="400">                                     | **Flow:** The control center. Uses a persistent WebSocket connection to push live, unrefreshed alerts directly to the Admin UI whenever a transfer exceeds Rs. 50,000 or a new user attempts registration. |
-| **Admin AI Fraud Detection** |                                        <img src="docs/images/ai-fraud.png" width="400">                                        | **Flow:** Admins trigger an AI audit on specific users. The backend aggregates the user's historical transaction data and prompts Google Gemini / xAI, generating a JSON-formatted risk score (0-100) and a plain-text analysis of spending anomalies. |
+| **Transaction Ledger** | <img src="docs/images/transaction-history.png" width="400"> | **Flow:** Paginated and sortable ledger of all credits and debits. Automatically tracks execution times via custom `@Performance` Java Interceptors to identify backend bottlenecks. |
+| **PDF Receipt Export** | <img src="docs/images/pdf-receipt.png" width="400"> | **Flow:** Users can filter the ledger by date/account and instantly generate standard-compliant PDF transaction receipts dynamically on the client-side. |
+| **Admin Dashboard & Live Alerts** | <img src="docs/images/admin-dashboard.png" width="400"> | **Flow:** The control center. Uses a persistent WebSocket connection to push live, unrefreshed alerts directly to the Admin UI whenever a transfer exceeds Rs. 50,000 or a new user attempts registration. |
+| **Admin AI Fraud Detection** | <img src="docs/images/ai-fraud.png" width="400"> | **Flow:** Admins trigger an AI audit on specific users. The backend aggregates the user's historical transaction data and prompts Google Gemini / xAI, generating a JSON-formatted risk score (0-100) and a plain-text analysis of spending anomalies. |
 
 ---
 
@@ -87,7 +87,7 @@ To evaluate the Admin Console without waiting for SMTP email OTPs, an optimized 
 | **AI Integration** | Google Gemini LLM API, xAI API (Fraud Anomaly Detection) |
 | **Database & ORM** | MySQL 8.0, JPA (Hibernate), Transactions (JTA, BMT, CMT) |
 | **Real-time/Async** | WebSockets, EJB Timer Service (`@Schedule`), JavaMail API |
-| **DevOps & Cloud** | Docker, Docker Compose, Nginx (Reverse Proxy), DigitalOcean (Ubuntu) |
+| **DevOps & Cloud** | GitHub Actions (CI/CD), Docker, Docker Compose, Nginx, Let's Encrypt SSL, DigitalOcean |
 | **Testing** | JUnit 5, Mockito (Unit/Integration Testing) |
 
 ---
@@ -108,6 +108,15 @@ To evaluate the Admin Console without waiting for SMTP email OTPs, an optimized 
 4. **Endpoint Authorization:** Programmatic security using `@RolesAllowed("ADMIN")` and `@RolesAllowed("CUSTOMER")` is utilized extensively across REST resources and EJBs to prevent unauthorized execution.
 5. **Gateway Verification:** MD5 Signature verification is strictly enforced on the PayHere webhook endpoint to prevent spoofed payment confirmations.
 6. **Environment Isolation:** Sensitive API keys (Gemini, PayHere, Mail Credentials, DB passwords) are entirely abstracted from the codebase using `.env` files and Docker runtime environment variables.
+
+---
+
+## 🔄 Automated CI/CD Pipeline (GitHub Actions)
+
+The project utilizes GitHub Actions for continuous integration and deployment:
+
+1. **Continuous Integration (CI):** On every push to `master`, isolated runners provision Java 17 and Node environments to compile the backend `.war`, execute the JUnit 5 test suite, and build the Angular production assets.
+2. **Continuous Deployment (CD):** Upon successful tests, the pipeline securely SSHs into the DigitalOcean droplet, pulls the latest artifact, and orchestrates a zero-downtime `docker-compose` rebuild.
 
 ---
 
@@ -158,42 +167,48 @@ The backend business logic is rigorously tested, covering 50+ enterprise scenari
 
 ## ☁️ Live Cloud Deployment (DigitalOcean & Docker)
 
-This application is fully containerized and designed for rapid cloud deployment using `docker-compose`.
+This application is fully containerized and designed for rapid cloud deployment using `docker-compose` accompanied by an automated reverse proxy layer.
 
 ### The Architecture:
 
 1. **Database Container:** `mysql:8.0` instance with internal Docker DNS networking (`db:3306`), secured with persistent volumes.
 2. **Backend Container:** GlassFish 7 server running the compiled `.war`, injected dynamically with Gemini and PayHere API keys via `.env`.
-3. **Frontend Container:** Angular SPA built for production, served via an **Nginx** reverse proxy that automatically routes `/api` requests to the GlassFish backend container to completely bypass CORS issues.
+3. **Frontend Container:** Angular SPA built for production, served via an **Nginx HTTPS Proxy** that encapsulates SSL execution using Let's Encrypt certificates and passes traffic directly to the GlassFish backend layer.
 
 ### Deployment Instructions (DigitalOcean Ubuntu Droplet):
 
 1. Provision a DigitalOcean Ubuntu Droplet (Minimum 2GB RAM / 1 CPU).
-2. SSH into the server and install Docker and Git.
+2. SSH into the server and install Docker, Git, and Certbot.
 3. Clone the repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/BankingSystemEE.git
+git clone [https://github.com/YOUR_USERNAME/BankingSystemEE.git](https://github.com/YOUR_USERNAME/BankingSystemEE.git)
 cd BankingSystemEE
 
 ```
 
+4. Generate production-grade SSL certificates via standalone Certbot:
 
-4. Create your `.env` file to securely inject your keys:
 ```bash
-nano .env
-# Add: GEMINI_API_KEY=..., XAI_API_KEY=..., PAYHERE_MERCHANT_ID=..., PAYHERE_MERCHANT_SECRET=...
+docker run -it --rm --name certbot -p 80:80 -v "/root/BankingSystemEE/certbot/conf:/etc/letsencrypt" -v "/root/BankingSystemEE/certbot/www:/var/www/certbot" certbot/certbot certonly --standalone -d fortressbank.dedyn.io -m your_email@gmail.com --agree-tos --no-eff-email
 
 ```
 
+5. Create your `.env` file to securely inject variables:
 
-5. Build and launch the multi-container architecture in detached mode:
+```bash
+nano .env
+# Add variables: GEMINI_API_KEY=..., XAI_API_KEY=..., PAYHERE_MERCHANT_ID=..., PAYHERE_MERCHANT_SECRET=...
+
+```
+
+6. Build and launch the multi-container architecture in detached mode:
+
 ```bash
 docker-compose up -d --build
 
 ```
 
-
-6. The application is now live! Access the Angular frontend on port `80` via your Droplet's Public IP address.
+7. The application is now fully live and encrypted! Access the portal at **https://fortressbank.dedyn.io/**.
 
 ---
 
@@ -202,7 +217,8 @@ docker-compose up -d --build
 ```plaintext
 BankingSystemEE/
 │
-├── banking-frontend/    # Angular 17 SPA (UI, Interceptors, Guards, SCSS, RxJS)
+├── .github/workflows/   # CI/CD Automated Pipelines (GitHub Actions Runners)
+├── banking-frontend/    # Angular 17 SPA (UI, Interceptors, Guards, SCSS, RxJS, Nginx Proxy)
 ├── src/main/java/       # Jakarta EE 10 Backend Source
 │   ├── model/           # JPA Entity Classes (User, Account, Transaction)
 │   ├── rest/            # JAX-RS Endpoints (AuthResource, PayhereWebhook, FraudDetection)
@@ -210,7 +226,7 @@ BankingSystemEE/
 │   ├── singleton/       # Timer Polling & Scheduled Tasks (@Schedule)
 │   ├── interceptor/     # Logging, Performance, Audit Interceptors
 │   └── exception/       # Custom ApplicationExceptions with Rollback handling
-├── docker-compose.yml   # Multi-container orchestration (DB, GlassFish, Nginx)
+├── docker-compose.yml   # Multi-container orchestration (DB, GlassFish, Nginx HTTPS Proxy)
 ├── Dockerfile           # Backend GlassFish Builder & Deployer
 └── pom.xml              # Maven dependencies (jjwt, jbcrypt, javaee-api, mockito)
 
@@ -220,7 +236,7 @@ BankingSystemEE/
 
 ## 🎯 Project Objectives Covered
 
-This project was originally developed under the **Business Component Development II** module and has since been scaled into a production-grade application, fulfilling the following strict enterprise criteria:
+This project was originally developed under the **Business Component Development** module and has since been scaled into a production-grade application, fulfilling the following strict enterprise criteria:
 
 * Advanced Timer Services for autonomous banking operations.
 * Interceptor implementation for clean, AOP-style logging and auditing.
