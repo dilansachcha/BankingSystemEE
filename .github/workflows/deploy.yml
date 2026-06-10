@@ -1,29 +1,54 @@
-deploy:
-  name: Deploy to DigitalOcean
-  needs: [build-and-test]
-  runs-on: ubuntu-latest
-  if: github.ref == 'refs/heads/master'
+name: BankingSystemEE CI/CD Pipeline
 
-  steps:
-    - name: Execute Remote SSH Commands to Deploy
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.DO_HOST }}
-        username: ${{ secrets.DO_USERNAME }}
-        key: ${{ secrets.DO_SSH_KEY }}
-        script: |
-          cd /root/BankingSystemEE
-          git pull origin master --rebase
-          
-          # force kills ghost containers
-          docker rm -f bankingsystemee_db_1 bankingsystemee_backend_1 bankingsystemee_frontend_1 || true
-          
-          # wipe cache
-          docker-compose rm -f
-          
-          # clean recreation
-          docker-compose build
-          docker-compose up -d --force-recreate
-          
-          # clean up old docker images
-          docker image prune -f
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build-and-test:
+    name: Build Backend & Run JUnit/Mockito Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and Run Java Tests
+        run: mvn clean package -DskipTests=false
+
+  deploy:
+    name: Deploy to DigitalOcean
+    needs: [build-and-test]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Execute Remote SSH Commands to Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          script: |
+            cd /root/BankingSystemEE
+            git pull origin master --rebase
+            
+            # force kills ghost containers
+            docker rm -f bankingsystemee_db_1 bankingsystemee_backend_1 bankingsystemee_frontend_1 || true
+            
+            # wipe cache
+            docker-compose rm -f
+            
+            # clean recreation
+            docker-compose build
+            docker-compose up -d --force-recreate
+            
+            # clean up old docker images
+            docker image prune -f
